@@ -14,19 +14,19 @@ function Navbar() {
     {
       to: "/",
       label: "Бош саҳифа",
-      icon: <HomeIcon fontSize="small" />,
+      icon: "homePage.svg",
       match: (path) => path === "/",
     },
     {
       to: "/income-expense",
       label: "Кирим-чиқим",
-      icon: <CalculateIcon fontSize="small" />,
+      icon: "incomeExpense.svg",
       match: (path) => path === "/income-expense",
     },
     {
       to: "/reports",
       label: "Ҳисоботлар",
-      icon: <MenuIcon fontSize="small" />,
+      icon: "reports.svg",
       match: (path) => path === "/reports",
     },
   ];
@@ -50,7 +50,7 @@ function Navbar() {
                 }`
               }
             >
-              {link.icon}
+              <img src={link.icon} alt="" />
               <span>{link.label}</span>
               {isActive ? (
                 <ExpandMoreIcon fontSize="small" />
