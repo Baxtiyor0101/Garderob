@@ -31,6 +31,8 @@ import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import TextareaAutosize from "@mui/material/TextareaAutosize";
 import Box from "@mui/material/Box";
+import { useTranslation } from "react-i18next";
+import { rows } from "../utils/mockData";
 
 const stats = [
   {
@@ -154,450 +156,130 @@ const modalRows = [
   // ... more mock rows ...
 ];
 
+const uzLocaleText = {
+  // Sorting
+  
+  columnMenuSortAsc: "Аск бўйича сортлаш",
+  columnMenuSortDesc: "Камайиш бўйича сортлаш",
+  columnMenuUnsort: "Сортлашни бекор қилиш",
+  // Filtering
+  columnMenuFilter: "Фильтрлаш",
+  // Hide/Show
+  columnMenuHideColumn: "Ушбу устунни яшириш",
+  columnMenuShowColumns: "Устунларни бошқариш",
+  // Other
+  columnsPanelTextFieldLabel: "Устунни топиш",
+  columnsPanelTextFieldPlaceholder: "Устун сарлавҳаси",
+  columnsPanelShowAllButton: "Барчасини кўрсатиш",
+  columnsPanelHideAllButton: "Барчасини яшириш",
+  // Pagination
+  // footerPaginationRowsPerPage: "Саҳифадаги қаторлар:",
+  // MuiTablePagination: {
+  //   labelRowsPerPage: "Саҳифадаги қаторлар:",
+  // },
+  footerTotalRows: "Жами қаторлар:",
+  footerPaginationRowsPerPage: "Саҳифадаги қаторлар:",
+  labelRowsPerPage: "Саҳифадаги қаторлар:",
+
+  // Selection
+  footerRowSelected: (count) =>
+    count === 1
+      ? "1 қатор танланган"
+      : `${count.toLocaleString()} қатор танланган`,
+  // Toolbar
+  toolbarColumns: "Устунлар",
+  toolbarFilters: "Фильтрлар",
+  toolbarDensity: "Зичлик",
+  toolbarExport: "Экспорт",
+  // Filter panel
+  filterPanelAddFilter: "Фильтр қўшиш",
+  filterPanelDeleteIconLabel: "Ўчириш",
+  filterPanelOperators: "Операторлар",
+  filterPanelOperatorAnd: "Ва",
+  filterPanelOperatorOr: "Ёки",
+  filterPanelColumns: "Устунлар",
+  filterPanelInputLabel: "Қиймат",
+  filterPanelInputPlaceholder: "Қиймат",
+  // No rows overlay
+  noRowsLabel: "Маълумотлар топилмади",
+  // Add more as needed from MUI's DataGrid localeText API
+};
+
 function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState(0);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const {t}  = useTranslation()
 
   // Move rows definition inside Home
-  const rows = [
-    {
-      id: 1,
-      fio: "Абдумаликов Дониёр Ильёсович",
-      position: "Бўлим бошлиғи, божхона хизмати майори",
-      structure: "БК марказий аппарат – 10",
-      post: "-",
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 2,
-      fio: "Маликов Ўктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 3,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 4,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 5,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 6,
-      fio: "Абдумаликов Дониёр Ильёсович",
-      position: "Бўлим бошлиғи, божхона хизмати майори",
-      structure: "БК марказий аппарат – 10",
-      post: "-",
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 7,
-      fio: "Маликов Ўктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 8,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 9,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 10,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 11,
-      fio: "Абдумаликов Дониёр Ильёсович",
-      position: "Бўлим бошлиғи, божхона хизмати майори",
-      structure: "БК марказий аппарат – 10",
-      post: "-",
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 12,
-      fio: "Маликов Ўктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 13,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 14,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 15,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 16,
-      fio: "Абдумаликов Дониёр Ильёсович",
-      position: "Бўлим бошлиғи, божхона хизмати майори",
-      structure: "БК марказий аппарат – 10",
-      post: "-",
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 17,
-      fio: "Маликов Ўктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 18,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 19,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 20,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 21,
-      fio: "Абдумаликов Дониёр Ильёсович",
-      position: "Бўлим бошлиғи, божхона хизмати майори",
-      structure: "БК марказий аппарат – 10",
-      post: "-",
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 22,
-      fio: "Маликов Ўктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 23,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 24,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 25,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 26,
-      fio: "Абдумаликов Дониёр Ильёсович",
-      position: "Бўлим бошлиғи, божхона хизмати майори",
-      structure: "БК марказий аппарат – 10",
-      post: "-",
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 27,
-      fio: "Маликов Ўктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 28,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 29,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 30,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 31,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 31,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    {
-      id: 33,
-      fio: "Маликов Юктам Рустамович",
-      position: "Инспектор (КККБ), божхона хизмати майори",
-      structure: "Тошкент вилояти – 27",
-      post: 'Яллама" ЧБП',
-      formal: "Муддати келган",
-      inner: "Муддати келган",
-      outer: "Муддати келган",
-      date: "12.02.2025 й.",
-      status: "Муддати келган",
-    },
-    // ... add more mock rows as needed ...
-  ];
+  
 
   // Move columns inside Home to access handleOpenModal
   const columns = useMemo(
     () => [
-      { field: "id", headerName: "T/r", width: 60 },
-      { field: "fio", headerName: "Ф.И.Ш", width: 200 },
-      { field: "position", headerName: "Лавозими ва унвони", width: 220 },
-      { field: "structure", headerName: "Тузилма номи", width: 180 },
-      { field: "post", headerName: "Пост номи", width: 120 },
+      { field: "id", headerName: "T/r", minWidth: 60, flex: 1 },
+      { field: "fio", headerName: "Ф.И.Ш", minWidth: 180, flex: 2 },
+      {
+        field: "position",
+        headerName: "Лавозими ва унвони",
+        minWidth: 200,
+        flex: 2,
+      },
+      {
+        field: "structure",
+        headerName: "Тузилма номи",
+        minWidth: 160,
+        flex: 1,
+      },
+      { field: "post", headerName: "Пост номи", minWidth: 120, flex: 1 },
       {
         field: "formal",
         headerName: "Формали кийим-бош",
-        width: 140,
+        minWidth: 180,
+        flex: 2,
         renderCell: (params) => (
-          <span className="text-red-500">{params.value}</span>
+          <span
+            className={
+              params.value !== "Муддати келган"
+                ? "bg-green-50 text-green-500 px-4 py-1 rounded-md font-medium border border-red-100"
+                : "bg-red-50 text-red-500 px-4 py-1 rounded-md font-medium border border-red-100"
+            }
+          >
+            {params.value}
+          </span>
         ),
       },
       {
         field: "inner",
         headerName: "Ички кийим",
-        width: 120,
+        minWidth: 180,
+        flex: 1,
         renderCell: (params) => (
-          <span className="text-red-500">{params.value}</span>
+          <span className="bg-red-50 text-red-500 px-4 rounded-md font-medium border border-red-100">
+            {params.value}
+          </span>
         ),
       },
       {
         field: "outer",
         headerName: "Оёқ кийим",
-        width: 120,
+        minWidth: 180,
+        flex: 1,
         renderCell: (params) => (
-          <span className="text-red-500">{params.value}</span>
+          <span className="bg-red-50 text-red-500 px-4 rounded-md font-medium border border-red-100">
+            {params.value}
+          </span>
         ),
       },
-      { field: "date", headerName: "Берилган сана", width: 120 },
-      { field: "status", headerName: "Мақоми", width: 120 },
+      { field: "date", headerName: "Берилган сана", minWidth: 120, flex: 1 },
+      { field: "status", headerName: "Мақоми", minWidth: 120, flex: 1 },
       {
         field: "actions",
-        headerName: "",
-        width: 60,
+        headerName: "Ҳаракатлар",
+        minWidth: 100,
+        flex: 1,
         sortable: false,
         renderCell: (params) => (
           <VisibilityIcon
@@ -645,6 +327,15 @@ function Home() {
     setModalTab(0);
   };
 
+  // filtering and searching logic
+  const [searchText, setSearchText] = useState("");
+const [filter, setFilter] = useState({  }); // your other filters
+
+const handleSearch = () => {
+  setFilter({ ...filter, name: searchText });
+  // If you want to filter immediately, make sure your table uses filter.name
+};
+
   return (
     <div className="p-4">
       {/* <h1 className="text-xl font-semibold mb-4">Бош саҳифа</h1> */}
@@ -653,7 +344,7 @@ function Home() {
           <div
             key={idx}
             className={`flex justify-between flex-col bg-white rounded-xl px-4 py-3 border-l-4 ${stat.borderColor}`}
-            style={{ boxShadow: "-8px 0 16px -8px rgba(0,0,0,0.08)" }}
+            style={{ boxShadow: "2px 0 16px 2px rgba(0,0,0,0.1)" }}
           >
             <div className="flex items-center gap-2 justify-between">
               <p className="text-[#A2A2A2] text-md">{stat.label}</p>
@@ -666,7 +357,8 @@ function Home() {
         ))}
       </div>
       <h2 className="text-2xl font-semibold mt-8 text-center">
-        Ходимларни Ашёвий таъминотлар билан таъминлаш рўйхати
+        {t("Ходимларни Ашёвий таъминотлар билан таъминлаш рўйхати")}
+        {/* Ходимларни Ашёвий таъминотлар билан таъминлаш рўйхати */}
       </h2>
       <div className="flex flex-col md:flex-row gap-4 mt-6">
         {/* Left select fields row */}
@@ -708,31 +400,31 @@ function Home() {
         <div className="flex flex-1 gap-2 items-center justify-end">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
+              label="sanadan"
               format="DD.MM.YYYY"
               slotProps={{
                 textField: {
                   size: "small",
                   variant: "outlined",
                   fullWidth: false,
-                  placeholder: "__/__/__ дан",
                 },
               }}
-              value={null}
-              onChange={() => {}}
+              value={fromDate}
+              onChange={setFromDate}
               sx={{ minWidth: 120 }}
             />
             <DatePicker
+              label="__._._ гача"
               format="DD.MM.YYYY"
               slotProps={{
                 textField: {
                   size: "small",
                   variant: "outlined",
                   fullWidth: false,
-                  placeholder: "__/__/__ гача",
                 },
               }}
-              value={null}
-              onChange={() => {}}
+              value={toDate}
+              onChange={setToDate}
               sx={{ minWidth: 120 }}
             />
           </LocalizationProvider>
@@ -740,17 +432,20 @@ function Home() {
             size="small"
             variant="outlined"
             placeholder="Қидирув..."
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton edge="end" size="small">
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
             sx={{ minWidth: 160 }}
+            label="Қидирув"
           />
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={handleSearch}
+            sx={{ minWidth: 40, minHeight: 40, px: 1, py: 1, ml: 1 }}
+          >
+            <SearchIcon />
+          </Button>
           <IconButton size="small">
             <FilterListIcon />
           </IconButton>
@@ -762,7 +457,11 @@ function Home() {
           </IconButton>
         </div>
       </div>
-      <div className="mt-8 bg-white rounded-xl h-[480px] overflow-hidden p-4 border border-slate-200 flex flex-col">
+
+      <div
+        style={{ boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)" }}
+        className="mt-8 bg-white rounded-xl p-4 h-[500px] border overflow-auto border-slate-200 flex flex-col w-full"
+      >
         <DataGrid
           rows={rows}
           columns={columns}
@@ -770,15 +469,46 @@ function Home() {
           rowsPerPageOptions={[8, 16, 32]}
           pagination
           disableSelectionOnClick
+          localeText={uzLocaleText}
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
+          }
           sx={{
-            height: 400,
+            width: "100%",
+            "& .MuiDataGrid-cell": {
+              display: "flex",
+              whiteSpace: "normal",
+              wordBreak: "break-word",
+              lineHeight: "1.4",
+              alignItems: "center",
+              justifyContent: " ",
+            },
+            "& .MuiDataGrid-columnHeaderTitle": {
+              whiteSpace: "normal",
+              wordBreak: "break-word",
+              lineHeight: "1.4",
+              textAlign: "center !important",
+              fontWeight: "bold",
+            },
+            "& .MuiDataGrid-columnHeader": {
+              backgroundColor: "#9fbeefff",
+              justifyContent: "center",
+              alignItems: "center",
+            },
             "& .MuiDataGrid-footerContainer": {
               position: "sticky",
               bottom: 0,
               background: "white",
               zIndex: 10,
             },
+            "& .even-row": {
+              backgroundColor: "#f0f8ff",
+            },
+            "& .odd-row": {
+              backgroundColor: "#ffffff",
+            },
           }}
+          // Remove autoHeight to enable scrolling
         />
       </div>
       <Dialog
