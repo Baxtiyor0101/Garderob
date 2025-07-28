@@ -35,7 +35,7 @@ export default function ProductDialog({
       anchor="right"
       open={addOpen}
       onClose={() => setAddOpen(false)}
-      PaperProps={{ sx: { width: 400, maxWidth: "100%" } }}
+      PaperProps={{ sx: { width: 700, maxWidth: "100%" } }}
     >
       <DialogTitle className="font-bold text-xl" sx={{ px: 3, pt: 3 }}>
         {editMode ? "Kiyimni o'zgartirish" : "Kiyim киритиш"}
@@ -79,7 +79,7 @@ export default function ProductDialog({
             label="Narxi"
             type="number"
             value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
+            onChange={(e) => setForm({ ...form, price: e.target.value})}
             fullWidth
           />
         </div>
@@ -100,7 +100,8 @@ export default function ProductDialog({
           </FormControl>
         )}
 
-        {/* MULTI SELECT with TAGS like image */}
+        {/* MULTI SELECT with TAGS like this is  image */}
+        {/* this is just an example of how to use Autocomplete component with multiple options */}
         <Autocomplete
           multiple
           disabled={!form.type}

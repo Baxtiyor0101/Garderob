@@ -9,8 +9,9 @@ import {
   Select,
   TextField,
   IconButton,
+  TablePaginationActions,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridPagination } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import ProductDialog from "./components/AddEditModal";
@@ -124,31 +125,31 @@ function InfoProduct() {
 
   const columns = [
     { field: "id", headerName: "#", minWidth: 50, flex: 0.5 },
-    { field: "nameUz", headerName: "O'zbek tilida", minWidth: 150, flex: 1 },
-    { field: "nameRu", headerName: "Rus tilida", minWidth: 150, flex: 1 },
+    { field: "nameUz", headerName: t("Узб тили"), minWidth: 150, flex: 1 },
+    { field: "nameRu", headerName: t("Рус тили"), minWidth: 150, flex: 1 },
     {
       field: "type",
-      headerName: "Turi",
+      headerName: t("Тури"),
       minWidth: 120,
       flex: 1,
       renderCell: (params) =>
         types.find((t) => t.value === params.row.type)?.label ||
         params.row.type,
     },
-    { field: "price", headerName: "Narxi", minWidth: 100, flex: 1 },
+    { field: "price", headerName: t("Нархи"), minWidth: 100, flex: 1 },
     {
       field: "unit",
-      headerName: "O'lchov birligi",
+      headerName: t("Улчов бирлиги"),
       minWidth: 120,
       flex: 1,
       renderCell: (params) =>
         units.find((u) => u.value === params.row.unit)?.label ||
         params.row.unit,
     },
-    { field: "sizes", headerName: "O'lchamlari", minWidth: 120, flex: 1 },
+    { field: "sizes", headerName: t("Олчов бирлиги"), minWidth: 120, flex: 1 },
     {
       field: "status",
-      headerName: "Holati",
+      headerName: t("Холати"),
       minWidth: 100,
       flex: 1,
       renderCell: (params) => (
@@ -158,13 +159,13 @@ function InfoProduct() {
             fontWeight: 500,
           }}
         >
-          {params.row.status ? "Faol" : "Nofaol"}
+          {params.row.status ? t("Фаол") : t("нофаол")}
         </span>
       ),
     },
     {
       field: "actions",
-      headerName: "Tahrirlash",
+      headerName: t("Таҳрирлаш"),
       minWidth: 100,
       flex: 0.7,
       sortable: false,
@@ -175,24 +176,81 @@ function InfoProduct() {
       ),
     },
   ];
-// 😊😊😊😊😊😊😊😊😊😊😊😊😊😊😊😊😊
+  const uzLocaleText = {
+    // Pagination
+    noRowsLabel: "Маълумот топилмади",
+    footerRowSelected: (count) => `${count} та танланган`,
+    footerTotalRows: "Жами сатрлар:",
+    footerPaginationRowsPerPage: "Саҳифадаги сатрлар:",
+    MuiTablePagination: {
+      labelRowsPerPage: "Саҳифадаги сатрлар:",
+      labelDisplayedRows: ({ from, to, count }) =>
+        `${from}-${to} / ${count !== -1 ? count : `бешдан кўп`}`,
+      nextIconButtonText: "Кейингиси",
+      backIconButtonText: "Олдингиси",
+    },
+    // Filter panel
+    filterPanelAddFilter: "Фильтр қўшиш",
+    filterPanelDeleteIconLabel: "Ўчириш",
+    filterPanelOperators: "Операторлар",
+    filterPanelColumns: "Устунлар",
+    filterPanelInputLabel: "Қидирув қиймати",
+    filterPanelInputPlaceholder: "Қидирув...",
+    // Column menu
+    columnMenuLabel: "Меню",
+    columnMenuShowColumns: "Устунларни кўрсатиш",
+    columnMenuFilter: "Фильтр",
+    columnMenuHideColumn: "Устунни яшириш",
+    columnMenuUnsort: "Сараламаслик",
+    columnMenuSortAsc: "Кўтарилиш бўйича саралаш",
+    columnMenuSortDesc: "Камайиш бўйича саралаш",
+    // Toolbar
+    toolbarDensity: "Зичлик",
+    toolbarDensityLabel: "Зичлик",
+    toolbarDensityCompact: "Зич",
+    toolbarDensityStandard: "Стандарт",
+    toolbarDensityComfortable: "Қулай",
+    toolbarColumns: "Устунлар",
+    toolbarFilters: "Фильтрлар",
+    toolbarExport: "Экспорт",
+    toolbarExportCSV: "CSV'га экспорт",
+    toolbarExportPrint: "Чоп этиш",
+    // Other
+    checkboxSelectionHeaderName: "Танлаш",
+  };
+  function CustomPagination(props) {
+    return (
+      <GridPagination
+        {...props}
+        slots={{
+          actionsComponent: TablePaginationActions, // Optional if you want arrows customized too
+        }}
+        slotProps={{
+          rowsPerPageOptions: [10, 25, 50, 100],
+          labelRowsPerPage: "Саҳифадаги сатрлар:",
+        }}
+      />
+    );
+  }
   return (
     <Box p={2}>
       {/* <ProductStats /> */}
       <h2 className="text-2xl font-semibold my-8 text-center">
-        {t("here you can manage products")}
-      </h2>     
+        {/* {t("here you can manage products")} */}
+        {/* // HERE THIS COMMENT HAS TO BE WRITTEN IN CRYLS ALPHABET */}
+        {t("бу ерда маҳсулотларни бошқаришингиз мумкин")}
+      </h2>
       <Box display="flex" gap={2} flexWrap="wrap" mb={2}>
         <TextField
-          label="Nomi"
+          label={t("Номи")}
           size="small"
           value={filter.name}
           onChange={(e) => setFilter({ ...filter, name: e.target.value })}
         />
         <FormControl size="small" sx={{ minWidth: 140 }}>
-          <InputLabel>Turi</InputLabel>
+          <InputLabel>{t("Тури")}</InputLabel>
           <Select
-            label="Turi"
+            label={t("Тури")}
             value={filter.type}
             onChange={(e) => setFilter({ ...filter, type: e.target.value })}
           >
@@ -205,9 +263,9 @@ function InfoProduct() {
           </Select>
         </FormControl>
         <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>O'lchov birligi</InputLabel>
+          <InputLabel>{t("Улчов бирлиги")}</InputLabel>
           <Select
-            label="O'lchov birligi"
+            label={t("Улчов бирлиги")}
             value={filter.unit}
             onChange={(e) => setFilter({ ...filter, unit: e.target.value })}
           >
@@ -253,10 +311,16 @@ function InfoProduct() {
           rowsPerPageOptions={[8, 16, 32]}
           pagination
           disableSelectionOnClick
-          localeText={{ noRowsLabel: "Ma'lumot топилмади" }}
+          localeText={{
+            ...uzLocaleText,
+            toolbarColumnsLabel: "Устунларни бошқариш",
+          }}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
           }
+          slots={{
+            pagination: CustomPagination,
+          }}
           sx={{
             width: "100%",
             "& .MuiDataGrid-cell": {
