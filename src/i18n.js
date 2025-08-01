@@ -3,14 +3,14 @@ import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 // Translation files
-import translationUz from "./locales/uz/translation.json";
+import translationUz from "./locales/uzLatin/translation.json";
 import translationRu from "./locales/ru/translation.json";
-import translationEn from "./locales/en/translation.json";
+import translationEn from "./locales/uzCryl/translation.json";
 
 const resources = {
   uz: { translation: translationUz },
   ru: { translation: translationRu },
-  en: { translation: translationEn },
+  cr: { translation: translationEn },
 };
 
 i18n

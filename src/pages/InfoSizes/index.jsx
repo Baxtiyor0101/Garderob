@@ -15,9 +15,10 @@ import { DataGrid, GridPagination } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import ProductDialog from "./components/AddEditModal";
-import Stratistics from "./components/Stratistics";
+// import Stratistics from "./components/Stratistics";
 import { useTranslation } from "react-i18next";
-import ProductStats from "./components/Stratistics";
+import SizeDialog from "./components/AddEditModal";
+// import ProductStats from "./components/Stratistics";
 // import ProductDialog from "./components/CreateModaltProductDialog";
 // ProductDialog;
 const types = [
@@ -36,27 +37,31 @@ const units = [
 const initialRows = [
   {
     id: 1,
-    nameUz: "Куртка қишки",
-    nameRu: "Зимняя куртка",
-    type: "униформа",
-    price: 120000,
-    unit: "шт",
-    sizes: "S, M, L, XL",
+    name: "42",
+    clothesTypes: ["обувь", "шим"],
     status: true,
   },
   {
     id: 2,
-    nameUz: "Туфли",
-    nameRu: "Туфли",
-    type: "обувь",
-    price: 90000,
-    unit: "пара",
-    sizes: "39, 40, 41, 42",
+    name: "S",
+    clothesTypes: ["униформа", "нижнее белье"],
+    status: true,
+  },
+  {
+    id: 3,
+    name: "XL",
+    clothesTypes: ["униформа"],
     status: false,
+  },
+  {
+    id: 4,
+    name: "56",
+    clothesTypes: ["головной убор"],
+    status: true,
   },
 ];
 
-function InfoProduct() {
+function InfoSizes() {
   const [rows, setRows] = useState(initialRows);
   const [filter, setFilter] = useState({
     name: "",
@@ -69,8 +74,7 @@ function InfoProduct() {
   const [editMode, setEditMode] = useState(false);
   const { t } = useTranslation(); // Assuming you have a translation function
   const [form, setForm] = useState({
-    nameUz: "",
-    nameRu: "",
+    name: "",
     type: "",
     price: "",
     unit: "",
@@ -79,17 +83,17 @@ function InfoProduct() {
   });
   const [editRow, setEditRow] = useState(null);
 
-  const filteredRows = rows.filter((row) => {
-    const priceOk =
-      (!filter.priceFrom || row.price >= +filter.priceFrom) &&
-      (!filter.priceTo || row.price <= +filter.priceTo);
-    return (
-      row.nameUz.toLowerCase().includes(filter.name.toLowerCase()) &&
-      (filter.type ? row.type === filter.type : true) &&
-      (filter.unit ? row.unit === filter.unit : true) &&
-      priceOk
-    );
-  });
+const filteredRows = rows.filter((row) => {
+  // Filter by size name (case-insensitive)
+  const nameOk =
+    !filter.name ||
+    (row.name || "").toLowerCase().includes(filter.name.toLowerCase());
+    const nameRuOk = 
+    !filter.name || (row.nameRu || "").toLowerCase().includes(filter.name.toLowerCase());
+  // Filter by clothes type (at least one type matches)
+  const typeOk = !filter.type || (row.clothesTypes || []).includes(filter.type);
+  return nameOk && typeOk;
+});
 
   const handleOpenAdd = () => {
     setForm({
@@ -122,34 +126,48 @@ function InfoProduct() {
     }
     setDialogOpen(false);
   };
+  const clothesTypes = [
+    { value: "униформа", label: "Униформа" },
+    { value: "нижнее белье", label: "Нижнее белье" },
+    { value: "обувь", label: "Пойабзал" },
+    { value: "головной убор", label: "Бош кийим" },
+    { value: "шим", label: "Шим" },
+    // add more as needed
+  ];
 
   const columns = [
-    { field: "id", headerName: "#", minWidth: 50, flex: 0.5 },
-    { field: "nameUz", headerName: t("Узб тили"), minWidth: 150, flex: 1 },
-    { field: "nameRu", headerName: t("Рус тили"), minWidth: 150, flex: 1 },
+    { field: "id", headerName: "Т/р", minWidth: 60, flex: 0.5 },
     {
-      field: "type",
-      headerName: t("Тури"),
-      minWidth: 120,
+      field: "nameUz",
+      headerName: "Ўлчам номи (Узб)",
+      minWidth: 100,
       flex: 1,
-      renderCell: (params) =>
-        types.find((t) => t.value === params.row.type)?.label ||
-        params.row.type,
     },
-    { field: "price", headerName: t("Нархи"), minWidth: 100, flex: 1 },
     {
-      field: "unit",
-      headerName: t("Улчов бирлиги"),
-      minWidth: 120,
+      field: "nameRu",
+      headerName: "Ўлчам номи (Рус)",
+      minWidth: 100,
       flex: 1,
-      renderCell: (params) =>
-        units.find((u) => u.value === params.row.unit)?.label ||
-        params.row.unit,
     },
-    { field: "sizes", headerName: t("Олчов бирлиги"), minWidth: 120, flex: 1 },
+    {
+      field: "clothesTypes",
+      headerName: "Қандай кийим турлари учун",
+      minWidth: 200,
+      flex: 2,
+      renderCell: (params) => (
+        <span>
+          {(params.row.clothesTypes || [])
+            .map(
+              (type) =>
+                clothesTypes.find((t) => t.value === type)?.label || type
+            )
+            .join(", ")}
+        </span>
+      ),
+    },
     {
       field: "status",
-      headerName: t("Холати"),
+      headerName: "Ҳолати",
       minWidth: 100,
       flex: 1,
       renderCell: (params) => (
@@ -159,13 +177,13 @@ function InfoProduct() {
             fontWeight: 500,
           }}
         >
-          {params.row.status ? t("Фаол") : t("нофаол")}
+          {params.row.status ? "Фаол" : "Нофаол"}
         </span>
       ),
     },
     {
       field: "actions",
-      headerName: t("Таҳрирлаш"),
+      headerName: "Таҳрирлаш",
       minWidth: 100,
       flex: 0.7,
       sortable: false,
@@ -238,7 +256,7 @@ function InfoProduct() {
       <h2 className="text-2xl font-semibold my-4 text-center">
         {/* {t("here you can manage products")} */}
         {/* // HERE THIS COMMENT HAS TO BE WRITTEN IN CRYLS ALPHABET */}
-        {t("Бу ерда маҳсулотларни бошқаришингиз мумкин")}
+        {t("Бу ерда сиз улчамларни бошқаришингиз мумкин")}
       </h2>
       <Box display="flex" gap={2} flexWrap="wrap" mb={2}>
         <TextField
@@ -262,35 +280,7 @@ function InfoProduct() {
             ))}
           </Select>
         </FormControl>
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>{t("Улчов бирлиги")}</InputLabel>
-          <Select
-            label={t("Улчов бирлиги")}
-            value={filter.unit}
-            onChange={(e) => setFilter({ ...filter, unit: e.target.value })}
-          >
-            <MenuItem value="">{t("Барчаси")}</MenuItem>
-            {units.map((u) => (
-              <MenuItem key={u.value} value={u.value}>
-                {u.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <TextField
-          label={t("Нархи (дана)")}
-          size="small"
-          type="number"
-          value={filter.priceFrom}
-          onChange={(e) => setFilter({ ...filter, priceFrom: e.target.value })}
-        />
-        <TextField
-          label={t("Нархи (гача)")}
-          size="small"
-          type="number"
-          value={filter.priceTo}
-          onChange={(e) => setFilter({ ...filter, priceTo: e.target.value })}
-        />
+
         <Button
           variant="contained"
           color="primary"
@@ -358,7 +348,7 @@ function InfoProduct() {
           }}
         />
       </div>
-      <ProductDialog
+      <SizeDialog
         addOpen={dialogOpen}
         setAddOpen={setDialogOpen}
         form={form}
@@ -372,4 +362,4 @@ function InfoProduct() {
   );
 }
 
-export default InfoProduct;
+export default InfoSizes;

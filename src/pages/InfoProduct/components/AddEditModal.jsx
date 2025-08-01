@@ -12,12 +12,30 @@ import {
   Autocomplete,
   Drawer,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
+// import { t } from "i18next";
 
 const sizeOptions = {
   униформа: ["S", "M", "L", "XL"],
   "нижнее белье": ["S", "M", "L", "XL"],
   обувь: ["39", "40", "41", "42", "43", "44"],
-  "головной убор": ["54", "55", "56", "57", "58", "59", "60","61", "62", "63", "64",  "65", "66", "67", "68"],
+  "головной убор": [
+    "54",
+    "55",
+    "56",
+    "57",
+    "58",
+    "59",
+    "60",
+    "61",
+    "62",
+    "63",
+    "64",
+    "65",
+    "66",
+    "67",
+    "68",
+  ],
 };
 
 export default function ProductDialog({
@@ -30,6 +48,7 @@ export default function ProductDialog({
   handleAdd,
   editMode = false, // default to false if not provided
 }) {
+  const { t } = useTranslation();
   return (
     <Drawer
       anchor="right"
@@ -38,31 +57,57 @@ export default function ProductDialog({
       PaperProps={{ sx: { width: 700, maxWidth: "100%" } }}
     >
       <DialogTitle className="font-bold text-xl" sx={{ px: 3, pt: 3 }}>
-        {editMode ? "Kiyimni o'zgartirish" : "Kiyim киритиш"}
+        {editMode ? t("Кийимни таҳрирлаш") : t("Кийим киритиш")}
       </DialogTitle>
       <DialogContent className="flex flex-col gap-4 mt-2 pt-2" sx={{ px: 3 }}>
         <div className="flex items-center gap-4 justify-between">
           <TextField
-            label="Kiyim nomi (o'zbek tilida)"
+            label={t("Кийим номи (лотин тилида)")}
             value={form.nameUz}
-            onChange={(e) => setForm({ ...form, nameUz: e.target.value })}
+            onChange={(e) => {
+              const latinRegex = /^[A-Za-z\s'‘’-]*$/;
+              if (latinRegex.test(e.target.value)) {
+                setForm({ ...form, nameUz: e.target.value });
+              } else {
+                alert(t("Илтимос, фақат лотин ҳарфлари киритинг."));
+              }
+            }}
+            onPaste={(e) => {
+              const pasted = e.clipboardData.getData("text");
+              if (!/^[A-Za-z\s'‘’-]*$/.test(pasted)) {
+                e.preventDefault();
+              }
+            }}
             fullWidth
             className="mt-2"
             sx={{ marginTop: "10px" }}
           />
           <TextField
-            label="Kiyim nomi (rus tilida)"
+            label={t("Кийим номи (кирилл тилида)")}
             value={form.nameRu}
-            onChange={(e) => setForm({ ...form, nameRu: e.target.value })}
+            onChange={(e) => {
+              const cyrillicRegex = /^[А-Яа-яЁё\s'‘’-]*$/;
+              if (cyrillicRegex.test(e.target.value)) {
+                setForm({ ...form, nameRu: e.target.value });
+              } else {
+                alert("Пожалуйста, введите только буквы кириллицы.");
+              }
+            }}
+            onPaste={(e) => {
+              const pasted = e.clipboardData.getData("text");
+              if (!/^[А-Яа-яЁё\s'‘’-]*$/.test(pasted)) {
+                e.preventDefault();
+              }
+            }}
             sx={{ marginTop: "10px" }}
             fullWidth
           />
         </div>
         <div className="flex items-center gap-4 justify-between">
           <FormControl fullWidth>
-            <InputLabel>Kiyim turi</InputLabel>
+            <InputLabel>{t("Кийим тури")}</InputLabel>
             <Select
-              label="Kiyim turi"
+              label={t("Кийим тури")}
               value={form.type}
               onChange={(e) => {
                 setForm({ ...form, type: e.target.value, sizes: "" }); // reset sizes when type changes
@@ -76,26 +121,26 @@ export default function ProductDialog({
             </Select>
           </FormControl>
           <TextField
-            label="Narxi"
+            label={t("Кийим Нархи")}
             type="number"
             value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value})}
+            onChange={(e) => setForm({ ...form, price: e.target.value })}
             fullWidth
           />
         </div>
 
         {editMode && (
           <FormControl fullWidth>
-            <InputLabel>Holati</InputLabel>
+            <InputLabel>{t("Холат")}</InputLabel>
             <Select
-              label="Holati"
-              value={form.status ? "faol" : "nofaol"}
+              label={t("Холат")}
+              value={form.status ? t("фаол") : t("нофаол")}
               onChange={(e) =>
-                setForm({ ...form, status: e.target.value === "faol" })
+                setForm({ ...form, status: e.target.value === t("фаол") })
               }
             >
-              <MenuItem value="faol">Faol</MenuItem>
-              <MenuItem value="nofaol">Nofaol</MenuItem>
+              <MenuItem value={t("фаол")}>{t("фаол")}</MenuItem>
+              <MenuItem value={t("нофаол")}>{t("нофаол")}</MenuItem>
             </Select>
           </FormControl>
         )}
@@ -111,15 +156,15 @@ export default function ProductDialog({
           renderInput={(params) => (
             <TextField
               {...params}
-              label="O'lchamlari"
-              placeholder="Tanlang..."
+              label={t("Ўлчамлар")}
+              placeholder={t("Танланг...")}
             />
           )}
         />
         <FormControl>
           <InputLabel>O'lchov birligi</InputLabel>
           <Select
-            label="O'lchov birligi"
+            label={t("Улчов бирлиги")}
             value={form.unit}
             onChange={(e) => setForm({ ...form, unit: e.target.value })}
           >
@@ -133,38 +178,11 @@ export default function ProductDialog({
         {/* ...rest of your form fields... */}
       </DialogContent>
       <DialogActions className="mt-2" sx={{ px: 3, pb: 2 }}>
-        <Button onClick={() => setAddOpen(false)}>Бекор қилиш</Button>
+        <Button onClick={() => setAddOpen(false)}>{t("Бекор қилиш")}</Button>
         <Button variant="contained" onClick={handleAdd}>
-          КИРИТИШ
+          {t("КИРИТИШ")}
         </Button>
       </DialogActions>
     </Drawer>
-    // <Dialog
-    //   open={addOpen}
-    //   onClose={() => setAddOpen(false)}
-    //   maxWidth="sm"
-    //   fullWidth
-    // >
-    //   <DialogTitle className="font-bold text-xl">
-    //     {editMode ? "Kiyimni o'zgartirish" : "Kiyim киритиш"}
-    //   </DialogTitle>
-    //   <DialogContent
-    //     className="flex flex-col gap-4 mt-2 pt-2"
-    //     // sx={{zIndex: 1000 }}
-    //   >
-
-    //   </DialogContent>
-    //   <DialogActions className="mt-2">
-    //     <Button onClick={() => setAddOpen(false)}>Бекор қилиш</Button>
-    //     <Button variant="contained" onClick={handleAdd}>
-    //       КИРИТИШ
-    //     </Button>
-    //   </DialogActions>
-    // </Dialog>
   );
 }
-
-
-
-
-

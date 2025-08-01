@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   PeopleAlt,
   Assessment,
@@ -33,177 +33,7 @@ import TextareaAutosize from "@mui/material/TextareaAutosize";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
 import { rows } from "../utils/mockData";
-
-const stats = [
-  {
-    label: "Жами ходимлар",
-    value: "4 240",
-    icon: "/customs.svg",
-    borderColor: "border-slate-200",
-  },
-  {
-    label: "Муддати келган",
-    value: "440",
-    icon: "/deadline.svg",
-    borderColor: "border-red-200",
-  },
-  {
-    label: "Янги ходимлар",
-    value: "120",
-    icon: "/newCustoms.svg",
-    borderColor: "border-sky-300",
-  },
-  {
-    label: "Ротация",
-    value: "320",
-    icon: "/rotation.svg",
-    borderColor: "border-blue-300",
-  },
-  {
-    label: "Муддати яқин",
-    value: "847",
-    icon: "/nearDeadline.svg",
-    borderColor: "border-yellow-300",
-  },
-  {
-    label: "Берилганлар",
-    value: "47",
-    icon: "givens.svg",
-    borderColor: "border-green-300",
-  },
-];
-
-// Mock data for the table
-const modalColumns = [
-  { field: "id", headerName: "№", width: 50 },
-  { field: "name", headerName: "Ашёвий таъминот номи", width: 260 },
-  { field: "size", headerName: "Ўлчами", width: 70 },
-  { field: "amount", headerName: "Миқдори", width: 70 },
-  { field: "duration", headerName: "Муддати (йилда)", width: 110 },
-  { field: "date", headerName: "Берилган сана", width: 110 },
-  {
-    field: "status",
-    headerName: "Ҳолати",
-    width: 110,
-    renderCell: (params) => (
-      <span
-        className={
-          params.value === "Муддати келган"
-            ? "bg-red-100 text-red-500 px-2 py-1 rounded"
-            : "bg-green-100 text-green-600 px-2 py-1 rounded"
-        }
-      >
-        {params.value}
-      </span>
-    ),
-  },
-  {
-    field: "left",
-    headerName: "Қолди",
-    width: 80,
-    renderCell: (params) => (
-      <span
-        className={
-          params.value.includes("йил")
-            ? "bg-green-100 text-green-600 px-2 py-1 rounded"
-            : "bg-red-100 text-red-500 px-2 py-1 rounded"
-        }
-      >
-        {params.value}
-      </span>
-    ),
-  },
-  {
-    field: "given",
-    headerName: "Берилди",
-    width: 70,
-    renderCell: () => <Checkbox />,
-  },
-  {
-    field: "comment",
-    headerName: "Изоҳ",
-    width: 120,
-    renderCell: () => (
-      <TextareaAutosize
-        minRows={1}
-        className="w-full border rounded p-1 text-xs"
-        placeholder=""
-      />
-    ),
-  },
-];
-const modalRows = [
-  {
-    id: 1,
-    name: "Телпак қоракўлдан (кубанка аёллар учун), кокардаси билан",
-    size: 57,
-    amount: 1,
-    duration: 8,
-    date: "20.12.2024",
-    status: "Берилган",
-    left: "7 йил",
-  },
-  {
-    id: 2,
-    name: "Фуражка (аёллар учун пилотка), кокардаси билан",
-    size: 56,
-    amount: 1,
-    duration: 2,
-    date: "20.05.2025",
-    status: "Муддати келган",
-    left: "0 кун",
-  },
-  // ... more mock rows ...
-];
-
-const uzLocaleText = {
-  // Sorting
-  
-  columnMenuSortAsc: "Аск бўйича сортлаш",
-  columnMenuSortDesc: "Камайиш бўйича сортлаш",
-  columnMenuUnsort: "Сортлашни бекор қилиш",
-  // Filtering
-  columnMenuFilter: "Фильтрлаш",
-  // Hide/Show
-  columnMenuHideColumn: "Ушбу устунни яшириш",
-  columnMenuShowColumns: "Устунларни бошқариш",
-  // Other
-  columnsPanelTextFieldLabel: "Устунни топиш",
-  columnsPanelTextFieldPlaceholder: "Устун сарлавҳаси",
-  columnsPanelShowAllButton: "Барчасини кўрсатиш",
-  columnsPanelHideAllButton: "Барчасини яшириш",
-  // Pagination
-  // footerPaginationRowsPerPage: "Саҳифадаги қаторлар:",
-  // MuiTablePagination: {
-  //   labelRowsPerPage: "Саҳифадаги қаторлар:",
-  // },
-  footerTotalRows: "Жами қаторлар:",
-  footerPaginationRowsPerPage: "Саҳифадаги қаторлар:",
-  labelRowsPerPage: "Саҳифадаги қаторлар:",
-
-  // Selection
-  footerRowSelected: (count) =>
-    count === 1
-      ? "1 қатор танланган"
-      : `${count.toLocaleString()} қатор танланган`,
-  // Toolbar
-  toolbarColumns: "Устунлар",
-  toolbarFilters: "Фильтрлар",
-  toolbarDensity: "Зичлик",
-  toolbarExport: "Экспорт",
-  // Filter panel
-  filterPanelAddFilter: "Фильтр қўшиш",
-  filterPanelDeleteIconLabel: "Ўчириш",
-  filterPanelOperators: "Операторлар",
-  filterPanelOperatorAnd: "Ва",
-  filterPanelOperatorOr: "Ёки",
-  filterPanelColumns: "Устунлар",
-  filterPanelInputLabel: "Қиймат",
-  filterPanelInputPlaceholder: "Қиймат",
-  // No rows overlay
-  noRowsLabel: "Маълумотлар топилмади",
-  // Add more as needed from MUI's DataGrid localeText API
-};
+// import { t } from "i18next";
 
 function Home() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -211,108 +41,285 @@ function Home() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const {t}  = useTranslation()
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    try {
+      let elements = document.querySelectorAll(
+        ".MuiTablePagination-selectLabel.css-s09cke-MuiTablePagination-selectLabel"
+      );
+      elements.forEach((el) => {
+        el.innerHTML = t("Саҳифадаги қаторлар:");
+      });
+    } catch (e) {
+      // do nothing
+    }
+  }, []);
+
+  //////////////////////////////
+  const stats = [
+    {
+      label: t("Жами ходимлар"),
+      value: "4 240",
+      icon: "/customs.svg",
+      borderColor: "border-slate-200",
+    },
+    {
+      label: t("Муддати келган"),
+      value: "440",
+      icon: "/deadline.svg",
+      borderColor: "border-red-200",
+    },
+    {
+      label: t("Янги ходимлар"),
+      value: "120",
+      icon: "/newCustoms.svg",
+      borderColor: "border-sky-300",
+    },
+    {
+      label: t("Ротация"),
+      value: "320",
+      icon: "/rotation.svg",
+      borderColor: "border-blue-300",
+    },
+    {
+      label: t("Муддати яқин"),
+      value: "847",
+      icon: "/nearDeadline.svg",
+      borderColor: "border-yellow-300",
+    },
+    {
+      label: t("Берилганлар"),
+      value: "47",
+      icon: "givens.svg",
+      borderColor: "border-green-300",
+    },
+  ];
+
+  // Mock data for the table
+  const modalColumns = [
+    { field: "id", headerName: "№", width: 50 },
+    { field: "name", headerName: t("Ашёвий таъминот номи"), width: 260 },
+    { field: "size", headerName: t("Ўлчами"), width: 70 },
+    { field: "amount", headerName: t("Миқдори"), width: 70 },
+    { field: "duration", headerName: t("Муддати (йилда)"), width: 110 },
+    { field: "date", headerName: t("Берилган сана"), width: 110 },
+    {
+      field: "status",
+      headerName: t("Ҳолати"),
+      width: 110,
+      renderCell: (params) => (
+        <span
+          className={
+            params.value === t("Муддати келган")
+              ? "bg-red-100 text-red-500 px-2 py-1 rounded"
+              : "bg-green-100 text-green-600 px-2 py-1 rounded"
+          }
+        >
+          {params.value}
+        </span>
+      ),
+    },
+    {
+      field: "left",
+      headerName: t("Қолди"),
+      width: 80,
+      renderCell: (params) => (
+        <span
+          className={
+            params.value.includes(t("йил"))
+              ? "bg-green-100 text-green-600 px-2 py-1 rounded"
+              : "bg-red-100 text-red-500 px-2 py-1 rounded"
+          }
+        >
+          {params.value}
+        </span>
+      ),
+    },
+    {
+      field: "given",
+      headerName: t("Берилди"),
+      width: 70,
+      renderCell: () => <Checkbox />,
+    },
+    {
+      field: "comment",
+      headerName: t("Изоҳ"),
+      width: 120,
+      renderCell: () => (
+        <TextareaAutosize
+          minRows={1}
+          className="w-full border rounded p-1 text-xs"
+          placeholder=""
+        />
+      ),
+    },
+  ];
+  // const modalRows = [
+  //   {
+  //     id: 1,
+  //     name: "Телпак қоракўлдан (кубанка аёллар учун), кокардаси билан",
+  //     size: 57,
+  //     amount: 1,
+  //     duration: 8,
+  //     date: "20.12.2024",
+  //     status: t("Берилган"),
+  //     left: t("7 йил"),
+  //   },
+  //   {
+  //     id: 2,
+  //     name: t("Фуражка (аёллар учун пилотка), кокардаси билан"),
+  //     size: 56,
+  //     amount: 1,
+  //     duration: 2,
+  //     date: "20.05.2025",
+  //     status: t("Муддати келган"),
+  //     left: t("0 кун"),
+  //   },
+  //   // ... more mock rows ...
+  // ];
+
+  const uzLocaleText = {
+    // Sorting
+
+    columnMenuSortAsc: t("Аск бўйича сортлаш"),
+    columnMenuSortDesc: t("Деск бўйича сортлаш"),
+    columnMenuUnsort: t("Сортлашни бекор қилиш"),
+    // Filtering
+    columnMenuFilter: t("Фильтрлаш"),
+    // Hide/Show
+    columnMenuHideColumn: t("Ушбу устунни яшириш"),
+    columnMenuShowColumns: t("Устунларни кўрсатиш"),
+    // Other
+    columnsPanelTextFieldLabel: t("Устунни топиш"),
+    columnsPanelTextFieldPlaceholder: t("Устун сарлавҳаси"),
+    columnsPanelShowAllButton: t("Барчасини кўрсатиш"),
+    columnsPanelHideAllButton: t("Барчасини яшириш"),
+    footerTotalRows: t("Жами қаторлар:"),
+    footerPaginationRowsPerPage: t("Саҳифадаги қаторлар:"),
+    labelRowsPerPage: t("Саҳифадаги қаторлар:"),
+
+    // Selection
+    footerRowSelected: (count) =>
+      count === 1
+        ? t("1 қатор танланган")
+        : `${count.toLocaleString()} ${t("қатор танланган")}`,
+    // Toolbar
+    toolbarColumns: t("Устунлар"),
+    toolbarFilters: t("Фильтрлар"),
+    toolbarDensity: t("Зичлик"),
+    toolbarExport: t("Экспорт"),
+    // Filter panel
+    filterPanelAddFilter: t("Фильтр қўшиш"),
+    filterPanelDeleteIconLabel: t("Ўчириш"),
+    filterPanelOperators: t("Операторлар"),
+    filterPanelOperatorAnd: t("Ва"),
+    filterPanelOperatorOr: t("Ёки"),
+    filterPanelColumns: t("Устунлар"),
+    filterPanelInputLabel: t("Қиймат"),
+    filterPanelInputPlaceholder: t("Қиймат"),
+    // No rows overlay
+    noRowsLabel: t("Маълумотлар топилмади"),
+    // Add more as needed from MUI's DataGrid localeText API
+  };
+  ////////////////
 
   // Move rows definition inside Home
-  
 
   // Move columns inside Home to access handleOpenModal
-  const columns = useMemo(
-    () => [
-      { field: "id", headerName: "T/r", minWidth: 60, flex: 1 },
-      { field: "fio", headerName: "Ф.И.Ш", minWidth: 180, flex: 2 },
-      {
-        field: "position",
-        headerName: "Лавозими ва унвони",
-        minWidth: 200,
-        flex: 2,
-      },
-      {
-        field: "structure",
-        headerName: "Тузилма номи",
-        minWidth: 160,
-        flex: 1,
-      },
-      { field: "post", headerName: "Пост номи", minWidth: 120, flex: 1 },
-      {
-        field: "formal",
-        headerName: "Формали кийим-бош",
-        minWidth: 180,
-        flex: 2,
-        renderCell: (params) => (
-          <span
-            className={
-              params.value !== "Муддати келган"
-                ? "bg-green-50 text-green-500 px-4 py-1 rounded-md font-medium border border-red-100"
-                : "bg-red-50 text-red-500 px-4 py-1 rounded-md font-medium border border-red-100"
-            }
-          >
-            {params.value}
-          </span>
-        ),
-      },
-      {
-        field: "inner",
-        headerName: "Ички кийим",
-        minWidth: 180,
-        flex: 1,
-        renderCell: (params) => (
-          <span className="bg-red-50 text-red-500 px-4 rounded-md font-medium border border-red-100">
-            {params.value}
-          </span>
-        ),
-      },
-      {
-        field: "outer",
-        headerName: "Оёқ кийим",
-        minWidth: 180,
-        flex: 1,
-        renderCell: (params) => (
-          <span className="bg-red-50 text-red-500 px-4 rounded-md font-medium border border-red-100">
-            {params.value}
-          </span>
-        ),
-      },
-      { field: "date", headerName: "Берилган сана", minWidth: 120, flex: 1 },
-      { field: "status", headerName: "Мақоми", minWidth: 120, flex: 1 },
-      {
-        field: "actions",
-        headerName: "Ҳаракатлар",
-        minWidth: 100,
-        flex: 1,
-        sortable: false,
-        renderCell: (params) => (
-          <VisibilityIcon
-            className="text-blue-500 cursor-pointer"
-            onClick={() => handleOpenModal(params.row)}
-          />
-        ),
-      },
-    ],
-    []
-  );
+  const columns = [
+    { field: "id", headerName: "T/r", minWidth: 60, flex: 1 },
+    { field: "fio", headerName: t("Ф.И.Ш"), minWidth: 180, flex: 2 },
+    {
+      field: "position",
+      headerName: t("Лавозими ва унвони"),
+      minWidth: 200,
+      flex: 2,
+    },
+    {
+      field: "structure",
+      headerName: t("Тузилма номи"),
+      minWidth: 160,
+      flex: 1,
+    },
+    { field: "post", headerName: t("Пост номи"), minWidth: 120, flex: 1 },
+    {
+      field: "formal",
+      headerName: t("Формали кийим-бош"),
+      minWidth: 180,
+      flex: 2,
+      renderCell: (params) => (
+        <span
+          className={
+            params.value !== t("Муддати келган")
+              ? "bg-green-50 text-green-500 px-4 py-1 rounded-md font-medium border border-red-100"
+              : "bg-red-50 text-red-500 px-4 py-1 rounded-md font-medium border border-red-100"
+          }
+        >
+          {params.value}
+        </span>
+      ),
+    },
+    {
+      field: "inner",
+      headerName: t("Ички кийим"),
+      minWidth: 180,
+      flex: 1,
+      renderCell: (params) => (
+        <span className="bg-red-50 text-red-500 px-4 rounded-md font-medium border border-red-100">
+          {params.value}
+        </span>
+      ),
+    },
+    {
+      field: "outer",
+      headerName: t("Оёқ кийим"),
+      minWidth: 180,
+      flex: 1,
+      renderCell: (params) => (
+        <span className="bg-red-50 text-red-500 px-4 rounded-md font-medium border border-red-100">
+          {params.value}
+        </span>
+      ),
+    },
+    { field: "date", headerName: t("Берилган сана"), minWidth: 120, flex: 1 },
+    { field: "status", headerName: t("Мақоми"), minWidth: 120, flex: 1 },
+    {
+      field: "actions",
+      headerName: t("Ҳаракатлар"),
+      minWidth: 100,
+      flex: 1,
+      sortable: false,
+      renderCell: (params) => (
+        <VisibilityIcon
+          className="text-blue-500 cursor-pointer"
+          onClick={() => handleOpenModal(params.row)}
+        />
+      ),
+    },
+  ];
 
   // Mock modal table data
   const modalRows = [
     {
       id: 1,
-      name: "Телпак қоракўлдан (кубанка аёллар учун), кокардаси билан",
+      name: t("Телпак қоракўлдан (кубанка аёллар учун), кокардаси билан"),
       size: 57,
       amount: 1,
       duration: 8,
       date: "20.12.2024",
-      status: "Берилган",
-      left: "7 йил",
+      status: t("Берилган"),
+      left: t("7 йил"),
     },
     {
       id: 2,
-      name: "Фуражка (аёллар учун пилотка), кокардаси билан",
+      name: t("Фуражка (аёллар учун пилотка), кокардаси билан"),
       size: 56,
       amount: 1,
       duration: 2,
       date: "20.05.2025",
-      status: "Муддати келган",
-      left: "0 кун",
+      status: t("Муддати келган"),
+      left: t("0 кун"),
     },
     // ... more mock rows ...
   ];
@@ -329,12 +336,12 @@ function Home() {
 
   // filtering and searching logic
   const [searchText, setSearchText] = useState("");
-const [filter, setFilter] = useState({  }); // your other filters
+  const [filter, setFilter] = useState({}); // your other filters
 
-const handleSearch = () => {
-  setFilter({ ...filter, name: searchText });
-  // If you want to filter immediately, make sure your table uses filter.name
-};
+  const handleSearch = () => {
+    setFilter({ ...filter, name: searchText });
+    // If you want to filter immediately, make sure your table uses filter.name
+  };
 
   return (
     <div className="p-4">
@@ -358,39 +365,38 @@ const handleSearch = () => {
       </div>
       <h2 className="text-2xl font-semibold mt-8 text-center">
         {t("Ходимларни Ашёвий таъминотлар билан таъминлаш рўйхати")}
-        {/* Ходимларни Ашёвий таъминотлар билан таъминлаш рўйхати */}
       </h2>
       <div className="flex flex-col md:flex-row gap-4 mt-6">
         {/* Left select fields row */}
         <div className="flex flex-col md:flex-row gap-4 flex-1">
           <TextField
             select
-            label="Тузилма номи"
-            defaultValue="БК марказий аппарат"
+            label={t("Тузилма номи")}
+            defaultValue=""
             size="small"
             variant="outlined"
             fullWidth
           >
-            <MenuItem value="БК марказий аппарат">БК марказий аппарат</MenuItem>
+            <MenuItem value="">{t("БК марказий аппарат")}</MenuItem>
           </TextField>
           <TextField
             select
-            label="Пост"
+            label={t("Пост")}
             defaultValue=""
             size="small"
             variant="outlined"
-            placeholder="Барчаси..."
+            placeholder={t("Барчаси...")}
             fullWidth
           >
             <MenuItem value="">Барчаси...</MenuItem>
           </TextField>
           <TextField
             select
-            label="Мақоми"
+            label={t("Мақоми")}
             defaultValue=""
             size="small"
             variant="outlined"
-            placeholder="Барчаси..."
+            placeholder={t("Барчаси...")}
             fullWidth
           >
             <MenuItem value="">Барчаси...</MenuItem>
@@ -400,7 +406,7 @@ const handleSearch = () => {
         <div className="flex flex-1 gap-2 items-center justify-end">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="sanadan"
+              label={t("дан")}
               format="DD.MM.YYYY"
               slotProps={{
                 textField: {
@@ -414,7 +420,7 @@ const handleSearch = () => {
               sx={{ minWidth: 120 }}
             />
             <DatePicker
-              label="__._._ гача"
+              label={t("гача")}
               format="DD.MM.YYYY"
               slotProps={{
                 textField: {
@@ -431,11 +437,11 @@ const handleSearch = () => {
           <TextField
             size="small"
             variant="outlined"
-            placeholder="Қидирув..."
+            placeholder={t("Қидирув")}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             sx={{ minWidth: 160 }}
-            label="Қидирув"
+            label={t("Қидирув")}
           />
           <Button
             variant="contained"
@@ -469,7 +475,7 @@ const handleSearch = () => {
           rowsPerPageOptions={[8, 16, 32]}
           pagination
           disableSelectionOnClick
-          localeText={uzLocaleText}
+          localeText= {uzLocaleText}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
           }
@@ -519,7 +525,7 @@ const handleSearch = () => {
       >
         <DialogTitle className="flex items-center justify-between">
           <span className="text-blue-700 font-bold text-lg">
-            БЕРИЛИШ МУДДАТИ КЕЛГАН ФОРМАЛИ КИЙИМ-БОШ РЎЙХАТИ
+            {t("БЕРИЛИШ МУДДАТИ КЕЛГАН ФОРМАЛИ КИЙИМ-БОШ РЎЙХАТИ")}
           </span>
           <IconButton onClick={handleCloseModal}>
             <CloseIcon />
@@ -527,9 +533,9 @@ const handleSearch = () => {
         </DialogTitle>
         <DialogContent>
           <Tabs value={modalTab} onChange={(_, v) => setModalTab(v)}>
-            <Tab label="Формали кийим-бош" />
-            <Tab label="Ички кийим" />
-            <Tab label="Оёқ кийим" />
+            <Tab label={"Формали кийим-бош"} />
+            <Tab label={t("Ички кийим")} />
+            <Tab label={t("Оёқ кийим")} />
           </Tabs>
           <Box mt={2}>
             <DataGrid
@@ -543,10 +549,10 @@ const handleSearch = () => {
         </DialogContent>
         <DialogActions className="justify-between">
           <Button variant="outlined" color="inherit">
-            Бекор қилиш
+            {t("Бекор қилиш")}
           </Button>
           <Button variant="contained" color="success">
-            Сақлаш ва жўнатиш
+            {t("Сақлаш ва жўнатиш")}
           </Button>
         </DialogActions>
       </Dialog>

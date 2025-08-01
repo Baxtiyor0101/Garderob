@@ -1,7 +1,13 @@
 import React from "react";
 import LayersIcon from "@mui/icons-material/Layers";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import { Button, CircularProgress, MenuItem, TextField } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  DialogActions,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -23,128 +29,149 @@ import { DataGrid } from "@mui/x-data-grid";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-
-const stats = [
-  {
-    label: "Жами ашёвий таъминот",
-    value: "180 минг дона",
-    subValue: "160,2 млрд",
-    icon: <LayersIcon className="text-slate-400" fontSize="medium" />,
-    subLabel: "млрд",
-    border: "",
-    percent: null,
-    color: "text-gray-700",
-  },
-  {
-    label: "Фойдаланишда",
-    value: "112 минг дона",
-    subValue: "160,2 млрд",
-    icon: null,
-    subLabel: "млрд",
-    border: "border-l-2 border-blue-200",
-    percent: 66,
-    color: "text-blue-600",
-  },
-  {
-    label: "Захирада",
-    value: "68 минг дона",
-    subValue: "54,9 млрд",
-    icon: null,
-    subLabel: "млрд",
-    border: "border-l-2 border-green-200",
-    percent: 34,
-    color: "text-green-600",
-  },
-  {
-    label: "Ишдан бўшатилганлар",
-    value: "68 та",
-    subValue: "10,4 млн сўм",
-    icon: <PersonOutlineIcon className="text-red-400" fontSize="medium" />,
-    subLabel: "млн сўм",
-    border: "border-l-2 border-red-200",
-    percent: null,
-    color: "text-red-600",
-  },
-];
-
-const columns = [
-  { field: "id", headerName: "T/r", minWidth: 60, flex: 1 },
-  { field: "name", headerName: "Ашёвий таъминот номи", minWidth: 200, flex: 2 },
-  { field: "docNumber", headerName: "Юк хати рақами", minWidth: 120, flex: 1 },
-  { field: "docDate", headerName: "Юк хати санаси", minWidth: 120, flex: 1 },
-  { field: "status", headerName: "Ҳолати", minWidth: 100, flex: 1 },
-  { field: "from", headerName: "Кимдан", minWidth: 140, flex: 1 },
-  { field: "to", headerName: "Кимга", minWidth: 140, flex: 1 },
-  { field: "amount", headerName: "Сони", minWidth: 80, flex: 1 },
-  { field: "inUse", headerName: "Фойдаланишда", minWidth: 120, flex: 1 },
-  { field: "reserve", headerName: "Захирада", minWidth: 120, flex: 1 },
-  { field: "total", headerName: "Жами", minWidth: 80, flex: 1 },
-];
-
-const rows = [
-  {
-    id: 1,
-    name: "Куртка қишки",
-    docNumber: "3456",
-    docDate: "10.06.2025",
-    status: "Кирим",
-    from: "Божхона қўмитаси",
-    to: "Божхона қўмитаси",
-    amount: 100,
-    inUse: 18566,
-    reserve: 166,
-    total: 266,
-  },
-  {
-    id: 2,
-    name: "Фуражка (аёллар учун пилотка)",
-    docNumber: "3456",
-    docDate: "10.06.2025",
-    status: "Кирим",
-    from: "Божхона қўмитаси",
-    to: "Божхона қўмитаси",
-    amount: 100,
-    inUse: 18566,
-    reserve: 166,
-    total: 266,
-  },
-  // ...add more rows as needed
-];
-
-const uzLocaleText = {
-  // Sorting
-  columnMenuSortAsc: "Аск бўйича сортлаш",
-  columnMenuSortDesc: "Камайиш бўйича сортлаш",
-  columnMenuUnsort: "Сортлашни бекор қилиш",
-  // Filtering
-  columnMenuFilter: "Фильтрлаш",
-  // Hide/Show
-  columnMenuHideColumn: "Ушбу устунни яшириш",
-  columnMenuShowColumns: "Устунларни бошқариш",
-  // Other
-  columnsPanelTextFieldLabel: "Устунни топиш",
-  columnsPanelTextFieldPlaceholder: "Устун сарлавҳаси",
-  columnsPanelShowAllButton: "Барчасини кўрсатиш",
-  columnsPanelHideAllButton: "Барчасини яшириш",
-  // Pagination
-  MuiTablePagination: {
-    labelRowsPerPage: "Саҳифадаги қаторлар:",
-    labelDisplayedRows: ({ from, to, count }) =>
-      `${from}–${to} / ${count !== -1 ? count : `бешдан кўп`}`,
-    firstIconButtonText: "Биринчи саҳифа",
-    previousIconButtonText: "Олдинги саҳифа",
-    nextIconButtonText: "Кейинги саҳифа",
-    lastIconButtonText: "Охирги саҳифа",
-  },
-  // Add more as needed from MUI's DataGrid localeText API
-};
+import { useTranslation } from "react-i18next";
+import IncomeExpenseModal from "./components/Modal";
+// import { t } from "i18next";
 
 function IncomeExpense() {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [fromDate, setFromDate] = React.useState(null);
   const [toDate, setToDate] = React.useState(null);
+
+  const { t } = useTranslation();
+
+  /////////////////
+  const stats = [
+    {
+      label: t("Жами ашёвий таъминот"),
+      value: t("180 минг дона"),
+      subValue: t("160,2 млрд"),
+      icon: <LayersIcon className="text-slate-400" fontSize="medium" />,
+      subLabel: t("млрд"),
+      border: "",
+      percent: null,
+      color: "text-gray-700",
+    },
+    {
+      label: t("Фойдаланишда"),
+      value: t("112 минг дона"),
+      subValue: t("160,2 млрд"),
+      icon: null,
+      subLabel: t("млрд"),
+      border: "border-l-2 border-blue-200",
+      percent: 66,
+      color: "text-blue-600",
+    },
+    {
+      label: t("Захирада"),
+      value: t("68 минг дона"),
+      subValue: t("54,9 млрд"),
+      icon: null,
+      subLabel: t("млрд"),
+      border: "border-l-2 border-green-200",
+      percent: 34,
+      color: "text-green-600",
+    },
+    {
+      label: t("Ишдан бўшатилганлар"),
+      value: t("68 та"),
+      subValue: t("54,9 млрд"),
+      icon: <PersonOutlineIcon className="text-red-400" fontSize="medium" />,
+      subLabel: t("млн сўм"),
+      border: "border-l-2 border-red-200",
+      percent: null,
+      color: "text-red-600",
+    },
+  ];
+
+  const columns = [
+    { field: "id", headerName: "T/r", minWidth: 60, flex: 1 },
+    {
+      field: "name",
+      headerName: t("Ашёвий таъминот номи"),
+      minWidth: 200,
+      flex: 2,
+    },
+    {
+      field: "docNumber",
+      headerName: t("Юк хати рақами"),
+      minWidth: 120,
+      flex: 1,
+    },
+    {
+      field: "docDate",
+      headerName: t("Юк хати санаси"),
+      minWidth: 120,
+      flex: 1,
+    },
+    { field: "status", headerName: t("Ҳолати"), minWidth: 100, flex: 1 },
+    { field: "from", headerName: t("Кимдан"), minWidth: 140, flex: 1 },
+    { field: "to", headerName: t("Кимга"), minWidth: 140, flex: 1 },
+    { field: "amount", headerName: t("Сони"), minWidth: 80, flex: 1 },
+    { field: "inUse", headerName: t("Фойдаланишда"), minWidth: 120, flex: 1 },
+    { field: "reserve", headerName: t("Захирада"), minWidth: 120, flex: 1 },
+    { field: "total", headerName: t("Жами"), minWidth: 80, flex: 1 },
+  ];
+
+  const rows = [
+    {
+      id: 1,
+      name: t("Куртка қишки"),
+      docNumber: "3456",
+      docDate: "10.06.2025",
+      status: t("Кирим"),
+      from: t("Божхона қўмитаси"),
+      to: t("Божхона қўмитаси"),
+      amount: 100,
+      inUse: 18566,
+      reserve: 166,
+      total: 266,
+    },
+    {
+      id: 2,
+      name: t("Фуражка (аёллар учун пилотка)"),
+      docNumber: "3456",
+      docDate: "10.06.2025",
+      status: t("Кирим"),
+      from: t("Божхона қўмитаси"),
+      to: t("Божхона қўмитаси"),
+      amount: 100,
+      inUse: 18566,
+      reserve: 166,
+      total: 266,
+    },
+    // ...add more rows as needed
+  ];
+
+  const uzLocaleText = {
+    // Sorting
+    columnMenuSortAsc: t("Аск бўйича сортлаш"),
+    columnMenuSortDesc: t("Камайиш бўйича сортлаш"),
+    columnMenuUnsort: t("Сортлашни бекор қилиш"),
+    // Filtering
+    columnMenuFilter: t("Фильтрлаш"),
+    // Hide/Show
+    columnMenuHideColumn: t("Ушбу устунни яшириш"),
+    columnMenuShowColumns: t("Устунларни бошқариш"),
+    // Other
+    columnsPanelTextFieldLabel: t("Устунни топиш"),
+    columnsPanelTextFieldPlaceholder: t("Устун сарлавҳаси"),
+    columnsPanelShowAllButton: t("Барчасини кўрсатиш"),
+    columnsPanelHideAllButton: t("Барчасини яшириш"),
+    // Pagination
+    MuiTablePagination: {
+      labelRowsPerPage: t("Саҳифадаги қаторлар:"),
+      labelDisplayedRows: ({ from, to, count }) =>
+        `${from}–${to} / ${count !== -1 ? count : t(`бешдан кўп`)}`,
+      firstIconButtonText: t("Биринчи саҳифа"),
+      previousIconButtonText: t("Олдинги саҳифа"),
+      nextIconButtonText: t("Кейинги саҳифа"),
+      lastIconButtonText: t("Охирги саҳифа"),
+    },
+    // Add more as needed from MUI's DataGrid localeText API
+  };
+  ////////////////
 
   const handleRowClick = (params) => {
     setSelectedRow(params.row);
@@ -160,24 +187,35 @@ function IncomeExpense() {
     <div className="p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {/* Card 1 */}
-        <div className="bg-white rounded-xl shadow p-4  flex flex-col justify-between border-l-2 border-blue-200">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-400 text-sm">Жами ашёвий таъминот</span>
+        <div
+          style={{
+            boxShadow: "2px 0 16px 2px rgba(0,0,0,0.1)",
+          }}
+          className="bg-white rounded-xl shadow p-4  flex flex-col justify-between border-l-2 border-blue-200"
+        >
+          <div className="flex   justify-between">
+            <span className="text-gray-400 text-sm">
+              {t("Жами ашёвий таъминот")}
+            </span>
             <LayersIcon className="text-slate-400" fontSize="large" />
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between ">
             <div className="text-3xl font-bold text-gray-800">
-              180 <span className="text-base font-normal">минг дона</span>
+              180{" "}
+              <span className="text-base font-normal">{t("минг дона")}</span>
             </div>
             <div className="text-blue-700 font-semibold text-sm">
-              160,2 <span className="font-normal">млрд</span>
+              160,2 <span className="font-normal">{t("млрд")}</span>
             </div>
           </div>
         </div>
         {/* Card 2 */}
-        <div className="bg-white rounded-xl shadow p-4 flex flex-col justify-between gap-2 border-l-2 border-blue-200">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-400 text-sm">Фойдаланишда</span>
+        <div
+          style={{ boxShadow: "2px 0 16px 2px rgba(0,0,0,0.1)" }}
+          className="bg-white rounded-xl shadow p-4 flex flex-col justify-between gap-2 border-l-2 border-blue-200"
+        >
+          <div className="flex   justify-between">
+            <span className="text-gray-400 text-sm">{t("Фойдаланишда")}</span>
             <div className="relative">
               <CircularProgress
                 variant="determinate"
@@ -197,17 +235,21 @@ function IncomeExpense() {
           </div>
           <div className="flex items-center justify-between">
             <div className="text-3xl font-bold text-gray-800">
-              112 <span className="text-base font-normal">минг дона</span>
+              112{" "}
+              <span className="text-base font-normal">{t("минг дона")}</span>
             </div>
             <div className="text-blue-700 font-semibold text-sm">
-              160,2 <span className="font-normal">млрд</span>
+              160,2 <span className="font-normal">{t("млрд")}</span>
             </div>
           </div>
         </div>
         {/* Card 3 */}
-        <div className="bg-white rounded-xl shadow p-4 flex flex-col justify-between gap-2 border-l-2 border-green-200">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-400 text-sm">Захирада</span>
+        <div
+          style={{ boxShadow: "2px 0 16px 2px rgba(0,0,0,0.1)" }}
+          className="bg-white rounded-xl shadow p-4 flex flex-col justify-between gap-2 border-l-2 border-green-200"
+        >
+          <div className="flex   justify-between">
+            <span className="text-gray-400 text-sm">{t("Захирада")}</span>
             <div className="relative">
               <CircularProgress
                 variant="determinate"
@@ -227,28 +269,33 @@ function IncomeExpense() {
           </div>
           <div className="flex items-center justify-between">
             <div className="text-3xl font-bold text-gray-800">
-              68 <span className="text-base font-normal">минг дона</span>
+              68 <span className="text-base font-normal">{t("минг дона")}</span>
             </div>
             <div className="text-green-700 font-semibold text-sm">
-              54,9 <span className="font-normal">млрд</span>
+              54,9 <span className="font-normal">{t("млрд")}</span>
             </div>
           </div>
         </div>
         {/* Card 4 - Custom layout */}
-        <div className="bg-white rounded-xl shadow p-4 flex   items-center justify-between gap-0 border-l-2 border-red-200">
+        <div
+          style={{ boxShadow: "2px 0 16px 2px rgba(0,0,0,0.1)" }}
+          className="bg-white rounded-xl shadow p-4 flex   items-center justify-between gap-0 border-l-2 border-red-200"
+        >
           <div className="h-full flex flex-col justify-between">
-            <span className="text-gray-400 text-sm">Ишдан бўшатилганлар</span>
+            <span className="text-gray-400 text-sm">
+              {t("Ишдан бўшатилганлар")}
+            </span>
             <div className="text-3xl font-bold text-gray-800">
-              68 <span className="text-base font-normal">та</span>
+              68 <span className="text-base font-normal">{t("та")}</span>
             </div>
           </div>
           <div className="h-24 w-[3px] flex bg-gray-200 mx-4" />
           <div className="h-full flex flex-col justify-between">
             <span className="text-gray-400 text-sm">
-              Ундирилган пул маблағлари
+              {t("Ундирилган пул маблағлари")}
             </span>
             <div className="text-blue-700 font-bold text-xl">
-              10,4 <span className="font-normal">млн сўм</span>
+              10,4 <span className="font-normal">{t("млн сўм")}</span>
             </div>
           </div>
           <div className="ml-4 flex h-full items-start justify-center">
@@ -259,22 +306,28 @@ function IncomeExpense() {
         </div>
       </div>
       <h2 className="text-2xl font-semibold mt-8 text-center">
-        Жами ашёвий таъминотлар рўйхати
+        {t("Жами ашёвий таъминотлар рўйхати")}
       </h2>
       <div className="flex flex-col md:flex-row gap-4 mt-6">
         {/* Left select fields row */}
         <div className="flex flex-col md:flex-row gap-4 flex-1">
           <TextField
             select
-            label="Тузилма номи"
-            defaultValue="БК марказий аппарат"
+            label={t("Тузилма номи")}
+            defaultValue={t("БК марказий аппарат")}
             size="small"
             variant="outlined"
             fullWidth
           >
-            <MenuItem value="БК марказий аппарат">БК марказий аппарат</MenuItem>
-            <MenuItem value="Тошкент вилояти">Тошкент вилояти</MenuItem>
-            <MenuItem value="Андижон вилояти">Андижон вилояти</MenuItem>
+            <MenuItem value="БК марказий аппарат">
+              {t("БК марказий аппарат")}
+            </MenuItem>
+            <MenuItem value={t("Тошкент вилояти")}>
+              {t("Тошкент вилояти")}
+            </MenuItem>
+            <MenuItem value={t("Андижон вилояти")}>
+              {t("Андижон вилояти")}
+            </MenuItem>
             {/* Add more Cyrillic options as needed */}
           </TextField>
           <TextField
@@ -283,26 +336,26 @@ function IncomeExpense() {
             defaultValue=""
             size="small"
             variant="outlined"
-            placeholder="Барчаси..."
+            placeholder={t("Барчаси...")}
             fullWidth
           >
-            <MenuItem value="">Барчаси...</MenuItem>
-            <MenuItem value="Яллама ЧБП">Яллама ЧБП</MenuItem>
-            <MenuItem value="Чирчиқ ЧБП">Чирчиқ ЧБП</MenuItem>
+            <MenuItem value="">{t("Барчаси...")}</MenuItem>
+            <MenuItem value={t("Яллама ЧБП")}>{t("Яллама ЧБП")}</MenuItem>
+            <MenuItem value={t("Чирчиқ ЧБП")}>{t("Чирчиқ ЧБП")}</MenuItem>
             {/* Add more Cyrillic options as needed */}
           </TextField>
           <TextField
             select
-            label="Мақоми"
+            label={t("Мақоми")}
             defaultValue=""
             size="small"
             variant="outlined"
-            placeholder="Барчаси..."
+            placeholder={t("Барчаси...")}
             fullWidth
           >
-            <MenuItem value="">Барчаси...</MenuItem>
-            <MenuItem value="Кирим">Кирим</MenuItem>
-            <MenuItem value="Чиқим">Чиқим</MenuItem>
+            <MenuItem value="">{t("Барчаси...")}</MenuItem>
+            <MenuItem value={t("Кирим")}>{t("Кирим")}</MenuItem>
+            <MenuItem value={t("Чиқим")}>{t("Чиқим")}</MenuItem>
             {/* Add more Cyrillic options as needed */}
           </TextField>
         </div>
@@ -310,7 +363,7 @@ function IncomeExpense() {
         <div className="flex flex-1 gap-2 items-center justify-end">
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
-              label="__/__/__ дан"
+              label="дан"
               format="DD.MM.YYYY"
               slotProps={{
                 textField: {
@@ -324,7 +377,7 @@ function IncomeExpense() {
               sx={{ minWidth: 120 }}
             />
             <DatePicker
-              label="__/__/__ гача"
+              label="гача"
               format="DD.MM.YYYY"
               slotProps={{
                 textField: {
@@ -341,7 +394,7 @@ function IncomeExpense() {
           <TextField
             size="small"
             variant="outlined"
-            placeholder="Қидирув..."
+            placeholder={t("Қидирув...")}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -423,20 +476,11 @@ function IncomeExpense() {
         />
       </div>
       {/* Modal */}
-      <Dialog
+      <IncomeExpenseModal
         open={modalOpen}
         onClose={handleCloseModal}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Маълумот</DialogTitle>
-        <DialogContent>{/* Empty for now */}</DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal} color="primary">
-            Ёпиш
-          </Button>
-        </DialogActions>
-      </Dialog>
+        row={selectedRow}
+      />
     </div>
   );
 }

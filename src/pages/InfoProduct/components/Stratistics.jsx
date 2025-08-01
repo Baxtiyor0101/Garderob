@@ -28,25 +28,25 @@ const initialRows = [
 const ProductStats = () => {
   const stats = [
     {
-      label: "Жами маҳсулотлар",
+      label: t("Жами маҳсулотлар"),
       value: initialRows.length,
       icon: "/icons/box.svg",
       borderColor: "border-blue-500",
     },
     {
-      label: "Фаол маҳсулотлар",
+      label: t("Фаол маҳсулотлар"),
       value: initialRows.filter((item) => item.status).length,
       icon: "/icons/check.svg",
       borderColor: "border-green-500",
     },
     {
-      label: "Нофаол маҳсулотлар",
+      label: t("нофаол маҳсулотлар"),
       value: initialRows.filter((item) => !item.status).length,
       icon: "/icons/cross.svg",
       borderColor: "border-red-500",
     },
     {
-      label: "Уникал турлар",
+      label: t("Уникал турлар"),
       value: new Set(initialRows.map((item) => item.type)).size,
       icon: "/icons/category.svg",
       borderColor: "border-yellow-500",
@@ -94,7 +94,3 @@ const ProductStats = () => {
 };
 
 export default ProductStats;
-
-setTimeout(() => {
-  console.log("ProductStats component loaded successfully");
-}, 1000);

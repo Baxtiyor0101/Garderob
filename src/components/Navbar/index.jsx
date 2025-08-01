@@ -13,8 +13,9 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
+import AccountMenu from "./Menu";
 
-function Navbar() { 
+function Navbar() {
   const [langOpen, setLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("uz");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,8 +36,8 @@ function Navbar() {
 
   const languages = [
     { code: "uz", label: "O‘z" },
+    { code: "cr", label: "Уз" },
     { code: "ru", label: "Ру" },
-    { code: "en", label: "En" },
   ];
 
   const handleLanguageChange = (lang) => {
@@ -91,6 +92,7 @@ function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-white md:hidden cursor-pointer transition hover:text-blue-200"
           >
+            {t("TTTTTTTTTTTTTTT")}
             <MenuOutlinedIcon />
           </button>
           {/* Desktop Nav Links */}
@@ -203,10 +205,11 @@ function Navbar() {
           {/* Profile */}
           <div className="relative hidden md:block">
             <div
-              onClick={() => setProfileOpen(!profileOpen)}
-              className=" px-4 py-2 rounded-md cursor-pointer min-w-[260px] text-sm"
+              // onClick={() => setProfileOpen(!profileOpen)}
+              className="   py-2 rounded-md cursor-pointer   text-sm"
             >
-              <div className="text-white font-semibold">
+              <AccountMenu />
+              {/* <div className="text-white font-semibold">
                 {t("Фарманов Омарбек Бахтиёрович")}
               </div>
               <div className="text-white text-xs">
@@ -215,10 +218,10 @@ function Navbar() {
               <AssignmentIndIcon
                 className="absolute right-1 ml-4 top-2 text-white"
                 fontSize="small"
-              />
+              /> */}
             </div>
 
-            {profileOpen && (
+            {/* {profileOpen && (
               <div className="absolute right-0 mt-2 bg-white border rounded shadow z-50 border-none cursor-pointer">
                 <button
                   className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-200 text-sm cursor-pointer"
@@ -227,10 +230,10 @@ function Navbar() {
                     console.log("Logout clicked");
                   }}
                 >
-                  Чиқиш
+                  {t("Чиқиш")}
                 </button>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
