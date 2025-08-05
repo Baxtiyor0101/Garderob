@@ -134,18 +134,11 @@ const filteredRows = rows.filter((row) => {
     { value: "шим", label: "Шим" },
     // add more as needed
   ];
-
   const columns = [
     { field: "id", headerName: "Т/р", minWidth: 60, flex: 0.5 },
     {
-      field: "nameUz",
-      headerName: "Ўлчам номи (Узб)",
-      minWidth: 100,
-      flex: 1,
-    },
-    {
-      field: "nameRu",
-      headerName: "Ўлчам номи (Рус)",
+      field: "name",
+      headerName: "Ўлчам номи",
       minWidth: 100,
       flex: 1,
     },

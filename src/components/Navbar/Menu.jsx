@@ -11,15 +11,20 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
+import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const { t } = useTranslation();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
+    toast.success("opened Successfully!");
   };
   const handleClose = () => {
     setAnchorEl(null);
+    console.log("tttt");
   };
   return (
     <React.Fragment>
@@ -30,7 +35,7 @@ export default function AccountMenu() {
           <IconButton
             onClick={handleClick}
             size="small"
-            sx={{ ml: 2 }}
+            // sx={{ ml: 2 }}
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
@@ -79,6 +84,7 @@ export default function AccountMenu() {
         <MenuItem onClick={handleClose}>
           <Avatar /> Profile
         </MenuItem>
+        {/* i think here should be sm other part also  */}
         <MenuItem onClick={handleClose}>
           <Avatar /> My account
         </MenuItem>

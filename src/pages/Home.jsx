@@ -155,29 +155,7 @@ function Home() {
       ),
     },
   ];
-  // const modalRows = [
-  //   {
-  //     id: 1,
-  //     name: "Телпак қоракўлдан (кубанка аёллар учун), кокардаси билан",
-  //     size: 57,
-  //     amount: 1,
-  //     duration: 8,
-  //     date: "20.12.2024",
-  //     status: t("Берилган"),
-  //     left: t("7 йил"),
-  //   },
-  //   {
-  //     id: 2,
-  //     name: t("Фуражка (аёллар учун пилотка), кокардаси билан"),
-  //     size: 56,
-  //     amount: 1,
-  //     duration: 2,
-  //     date: "20.05.2025",
-  //     status: t("Муддати келган"),
-  //     left: t("0 кун"),
-  //   },
-  //   // ... more mock rows ...
-  // ];
+ 
 
   const uzLocaleText = {
     // Sorting

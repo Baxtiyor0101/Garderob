@@ -60,11 +60,17 @@ function Navbar() {
       match: (path) => path === "/income-expense",
     },
     {
-      to: "/reports",
-      label: t("Ҳисоботлар"),
-      icon: <MenuIcon />,
-      match: (path) => path === "/reports",
+      to: "/receivables",
+      label: t("ундирмалар"),
+      icon: <CalculateIcon />,
+      match: (path) => path === "/receivables",
     },
+    // {
+    //   to: "/reports",
+    //   label: t("Ҳисоботлар"),
+    //   icon: <MenuIcon />,
+    //   match: (path) => path === "/reports",
+    // },
     {
       label: t("Маълумотлар"),
       icon: <MenuIcon />,
@@ -92,7 +98,6 @@ function Navbar() {
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="text-white md:hidden cursor-pointer transition hover:text-blue-200"
           >
-            {t("TTTTTTTTTTTTTTT")}
             <MenuOutlinedIcon />
           </button>
           {/* Desktop Nav Links */}
@@ -124,7 +129,7 @@ function Navbar() {
                     {infoOpen && (
                       <div className="absolute left-0 mt-1 bg-white rounded shadow-lg z-10 w-48">
                         {link.children.map((child) => (
-                          <NavLink
+                          <NavLink 
                             key={child.to}
                             to={child.to}
                             onClick={() => setInfoOpen(false)}

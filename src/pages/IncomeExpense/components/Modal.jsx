@@ -10,6 +10,8 @@ import {
   IconButton,
 } from "@mui/material";
 import { Add, Remove } from "@mui/icons-material";
+// translation
+import { useTranslation } from "react-i18next";
 
 const items = [
   {
@@ -119,16 +121,16 @@ export default function IncomeExpenseModal({ open, onClose }) {
         </div>
 
         {/* Items section */}
-        <div className="mt-6 flex flex-col gap-4 bg-gray-100">
+        <div className="mt-6 flex flex-col gap-4  ">
           {items.map((item, index) => (
-            <div key={index} className="grid grid-cols-9 gap-2 items-end">
+            <div key={index} className="grid grid-cols-[3.7fr_1fr_1fr_1fr_1fr_1.2fr_1fr_0.2fr] gap-4 items-end">
               <TextField
                 select
                 label="Ашёний таъминот номи"
                 size="small"
                 fullWidth
                 defaultValue={item.name || ""}
-                sx={{ width: "100%" }}
+                // sx={{ width: "100%" }}
               >
                 {supplyOptions.map((opt) => (
                   <MenuItem key={opt} value={opt}>

@@ -1,106 +1,193 @@
-import React from "react";
+import React, { useState } from "react";
 import LayersIcon from "@mui/icons-material/Layers";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import {
-  Button,
-  CircularProgress,
-  DialogActions,
-  MenuItem,
-  TextField,
-} from "@mui/material";
+import { Button, CircularProgress, MenuItem, TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import {
-  PeopleAlt,
-  Assessment,
-  PersonAdd,
-  SyncAlt,
-  AccessTime,
-  VerifiedUser,
-} from "@mui/icons-material";
-import InputAdornment from "@mui/material/InputAdornment";
+
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import PrintIcon from "@mui/icons-material/Print";
 import CloseIcon from "@mui/icons-material/Close";
 import { DataGrid } from "@mui/x-data-grid";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
 import { useTranslation } from "react-i18next";
-import IncomeExpenseModal from "./components/Modal";
+import ReceivablesModal from "./components/Modal";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import ReceivablesDrawer from "./components/EditDrower";
 // import { t } from "i18next";
 
-function IncomeExpense() {
+function Receivables() {
+  const { t } = useTranslation();
   const [modalOpen, setModalOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [fromDate, setFromDate] = React.useState(null);
   const [toDate, setToDate] = React.useState(null);
+  const [searchText, setSearchText] = React.useState("");
+  const [editRow, setEditRow] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const types = [
+    { value: "униформа", label: "Униформа" },
+    { value: "нижнее белье", label: "Нижнее белье" },
+    { value: "обувь", label: "Обувь" },
+    { value: "головной убор", label: "Головной убор" },
+  ];
+  const units = [
+    { value: "шт", label: "шт" },
+    { value: "пара", label: "пара" },
+    { value: "к-т", label: "к-т" },
+  ];
 
-  const { t } = useTranslation();
+  // console.log(toDate);
+  const [form, setForm] = useState({
+    name: "",
+    type: "",
+    price: "",
+    unit: "",
+    sizes: "",
+    status: true,
+  });
+
 
   /////////////////
-   
-
+  const handleOpenEdit = (row) => {
+    setForm(row);
+    setEditRow(row);
+    setEditMode(true);
+    setDialogOpen(true);
+  };
   const columns = [
-    { field: "id", headerName: "T/r", minWidth: 60, flex: 1 },
+    { field: "id", headerName: "T/r", minWidth: 20, flex: 1 },
+    { field: "fio", headerName: t("Ф.И.Ш"), minWidth: 180, flex: 2 },
     {
-      field: "name",
-      headerName: t("Ашёвий таъминот номи"),
+      field: "position",
+      headerName: t("Лавозими ва унвони"),
       minWidth: 200,
       flex: 2,
     },
     {
-      field: "docNumber",
-      headerName: t("Юк хати рақами"),
+      field: "structure",
+      headerName: t("Тузилма номи"),
+      minWidth: 160,
+      flex: 1,
+    },
+    {
+      field: "exit-date",
+      headerName: t("Бўшатилгансанаси"),
+      minWidth: 80,
+      flex: 1,
+    },
+    {
+      field: "payable-amount",
+      headerName: t("Ундириладиган тўлов (сўм)"),
       minWidth: 120,
       flex: 1,
     },
     {
-      field: "docDate",
-      headerName: t("Юк хати санаси"),
+      field: "status",
+      headerName: t("Холати"),
       minWidth: 120,
       flex: 1,
+      renderCell: (params) => (
+        <span
+          style={{
+            background: params.value ? "#C9E8E8" : "#FFEDCB",
+            color: params.value ? "#105352" : "#D79723",
+            fontWeight: 600,
+            borderRadius: 8,
+            padding: "4px 12px",
+            display: "inline-block",
+            minWidth: 80,
+            textAlign: "center",
+          }}
+        >
+          {params.value ? t("Ундирилди") : t("Ундирилмади")}
+        </span>
+      ),
     },
-    { field: "status", headerName: t("Ҳолати"), minWidth: 100, flex: 1 },
-    { field: "from", headerName: t("Кимдан"), minWidth: 140, flex: 1 },
-    { field: "to", headerName: t("Кимга"), minWidth: 140, flex: 1 },
-    { field: "amount", headerName: t("Сони"), minWidth: 80, flex: 1 },
-    { field: "inUse", headerName: t("Фойдаланишда"), minWidth: 120, flex: 1 },
-    { field: "reserve", headerName: t("Захирада"), minWidth: 120, flex: 1 },
-    { field: "total", headerName: t("Жами"), minWidth: 80, flex: 1 },
+    {
+      field: "action",
+      headerName: "",
+      minWidth: 40,
+      flex: 1,
+      sortable: false,
+      renderCell: (params) => (
+        <>
+          <IconButton
+            color="primary"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent row click
+              setSelectedRow(params.row);
+              setModalOpen(true);
+            }}
+          >
+            <VisibilityIcon />
+            {/* here we  add edit icon */}
+          </IconButton>
+          <IconButton
+            color="primary"
+            onClick={() => handleOpenEdit(params.row)}
+          >
+            <EditIcon />
+          </IconButton>
+        </>
+      ),
+    },
   ];
 
   const rows = [
     {
       id: 1,
-      name: t("Куртка қишки"),
-      docNumber: "3456",
-      docDate: "10.06.2025",
-      status: t("Кирим"),
-      from: t("Божхона қўмитаси"),
-      to: t("Божхона қўмитаси"),
-      amount: 100,
-      inUse: 18566,
-      reserve: 166,
-      total: 266,
+      fio: t("Мирзаев Алишер Абдурауфович"),
+      position: t("Бош мутахассис"),
+      structure: t("Ахборот технологиялари бўлими"),
+      "exit-date": "2024-12-15",
+      "payable-amount": 1500000,
+      status: true,
+      action: "",
     },
     {
       id: 2,
-      name: t("Фуражка (аёллар учун пилотка)"),
-      docNumber: "3456",
-      docDate: "10.06.2025",
-      status: t("Кирим"),
-      from: t("Божхона қўмитаси"),
-      to: t("Божхона қўмитаси"),
-      amount: 100,
-      inUse: 18566,
-      reserve: 166,
-      total: 266,
+      fio: t("Каримова Дилшода Рустамовна"),
+      position: t("Бўлим бошлиғи"),
+      structure: t("Молиявий назорат бўлими"),
+      "exit-date": "2025-01-20",
+      "payable-amount": 2000000,
+      status: false,
+      action: "",
     },
-    // ...add more rows as needed
+    {
+      id: 3,
+      fio: t("Исломов Азизбек Шукурович"),
+      position: t("Юрисконсульт"),
+      structure: t("Юридик бўлим"),
+      "exit-date": "2025-03-05",
+      "payable-amount": 1200000,
+      status: true,
+      action: "",
+    },
+    {
+      id: 4,
+      fio: t("Шодмонова Зилола Ўткировна"),
+      position: t("Техник ходим"),
+      structure: t("Хўжалик бўлими"),
+      "exit-date": "2025-04-30",
+      "payable-amount": 950000,
+      status: false,
+      action: "",
+    },
+    {
+      id: 5,
+      fio: t("Тоиpов Сардор Хуршидович"),
+      position: t("Дастурчи"),
+      structure: t("ИТ бўлими"),
+      "exit-date": "2025-06-18",
+      "payable-amount": 1800000,
+      status: true,
+      action: "",
+    },
   ];
 
   const uzLocaleText = {
@@ -140,6 +227,11 @@ function IncomeExpense() {
   const handleCloseModal = () => {
     setModalOpen(false);
     setSelectedRow(null);
+  };
+
+  const handleSearch = () => {
+    setFilter({ ...filter, name: searchText });
+    // If you want to filter immediately, make sure your table uses filter.name
   };
 
   return (
@@ -267,7 +359,7 @@ function IncomeExpense() {
         </div>
       </div>
       <h2 className="text-2xl font-semibold mt-8 text-center">
-        {t("Жами ашёвий таъминотлар рўйхати")}
+        {t("Ашёвий таъминот учун ундириладиган пул маблағлари рўйхати")}
       </h2>
       <div className="flex flex-col md:flex-row gap-4 mt-6">
         {/* Left select fields row */}
@@ -356,17 +448,18 @@ function IncomeExpense() {
             size="small"
             variant="outlined"
             placeholder={t("Қидирув...")}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton edge="end" size="small">
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+            value={searchText}
             sx={{ minWidth: 160 }}
           />
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={handleSearch}
+            sx={{ minWidth: 40, minHeight: 40, px: 1, py: 1, ml: 1 }}
+          >
+            <SearchIcon />
+          </Button>
           {/* <IconButton size="small"><FilterListIcon /></IconButton> */}
           <IconButton size="small">
             <PrintIcon />
@@ -375,13 +468,13 @@ function IncomeExpense() {
             <CloseIcon />
           </IconButton>
           {/* here we need create button */}
-          <Button variant="contained" size="small">
+          {/* <Button variant="contained" size="small">
             +киритиш
-          </Button>
+          </Button> */}
         </div>
       </div>
 
-      {/* Table */}
+      {/* Table  */}
       <div
         className="mt-8 bg-white rounded-xl overflow-hidden p-4 border border-slate-200 h-[500px] flex flex-col w-full"
         style={{ width: "100%" }}
@@ -393,7 +486,7 @@ function IncomeExpense() {
           rowsPerPageOptions={[8, 16, 32]}
           pagination
           disableSelectionOnClick
-          onRowClick={handleRowClick}
+          //   onRowClick={handleRowClick}
           localeText={uzLocaleText}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
@@ -440,13 +533,23 @@ function IncomeExpense() {
         />
       </div>
       {/* Modal */}
-      <IncomeExpenseModal
+      <ReceivablesModal
         open={modalOpen}
         onClose={handleCloseModal}
         row={selectedRow}
       />
+            <ReceivablesDrawer
+              addOpen={dialogOpen}
+              setAddOpen={setDialogOpen}
+              form={form}
+              setForm={setForm}
+              types={types}
+              // units={units}
+              // handleAdd={handleSave}
+              // editMode={editMode}
+            />
     </div>
   );
 }
 
-export default IncomeExpense;
+export default Receivables;

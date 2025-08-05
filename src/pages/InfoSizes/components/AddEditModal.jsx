@@ -140,7 +140,7 @@ export default function SizeDialog({
         )}
       </DialogContent>
       <DialogActions className="mt-2" sx={{ px: 3, pb: 2 }}>
-        <Button onClick={() => setAddOpen(false)}>Бекор қилиш</Button>
+        <Button onClick={() => setAddOpen(false)}>{t("Бекор қилиш")}</Button>
         <Button variant="contained" onClick={handleAdd}>
           {editMode ? t("Таҳрирлаш") : t("КИРИТИШ")}
         </Button>
