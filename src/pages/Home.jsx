@@ -1,12 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  PeopleAlt,
-  Assessment,
-  PersonAdd,
-  SyncAlt,
-  AccessTime,
-  VerifiedUser,
-} from "@mui/icons-material";
+ 
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
@@ -33,6 +26,7 @@ import TextareaAutosize from "@mui/material/TextareaAutosize";
 import Box from "@mui/material/Box";
 import { useTranslation } from "react-i18next";
 import { rows } from "../utils/mockData";
+import useLanguageStore from "../store/languageStore";
 // import { t } from "i18next";
 
 function Home() {
@@ -41,6 +35,7 @@ function Home() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
+  const { language } = useLanguageStore();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -48,13 +43,19 @@ function Home() {
       let elements = document.querySelectorAll(
         ".MuiTablePagination-selectLabel.css-s09cke-MuiTablePagination-selectLabel"
       );
+      let manageColumns = document.querySelectorAll(
+        ".css-rizt0-MuiTypography-root"
+      );
+      manageColumns.forEach((el) => {
+        el.innerHTML = t("Устунларни бошқариш");
+      });
       elements.forEach((el) => {
         el.innerHTML = t("Саҳифадаги қаторлар:");
       });
     } catch (e) {
       // do nothing
     }
-  }, []);
+  }, [language]);
 
   //////////////////////////////
   const stats = [
@@ -155,7 +156,6 @@ function Home() {
       ),
     },
   ];
- 
 
   const uzLocaleText = {
     // Sorting
@@ -453,7 +453,7 @@ function Home() {
           rowsPerPageOptions={[8, 16, 32]}
           pagination
           disableSelectionOnClick
-          localeText= {uzLocaleText}
+          localeText={uzLocaleText}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"
           }

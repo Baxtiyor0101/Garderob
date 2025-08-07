@@ -1,5 +1,5 @@
 // InfoProductPage.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -18,6 +18,7 @@ import ProductDialog from "./components/AddEditModal";
 import Stratistics from "./components/Stratistics";
 import { useTranslation } from "react-i18next";
 import ProductStats from "./components/Stratistics";
+import useLanguageStore from "../../store/languageStore";
 // import ProductDialog from "./components/CreateModaltProductDialog";
 // ProductDialog;
 const types = [
@@ -78,7 +79,20 @@ function InfoProduct() {
     status: true,
   });
   const [editRow, setEditRow] = useState(null);
-
+    const { language } = useLanguageStore();
+  
+  useEffect(() => {
+    try {
+      let elements = document.querySelectorAll(
+        ".MuiTablePagination-selectLabel.css-s09cke-MuiTablePagination-selectLabel"
+      );
+      elements.forEach((el) => {
+        el.innerHTML = t("Саҳифадаги қаторлар:");
+      });
+    } catch (e) {
+      // do nothing
+    }
+  }, [language]);
   const filteredRows = rows.filter((row) => {
     const priceOk =
       (!filter.priceFrom || row.price >= +filter.priceFrom) &&
@@ -176,6 +190,7 @@ function InfoProduct() {
       ),
     },
   ];
+  
   const uzLocaleText = {
     // Pagination
     noRowsLabel: "Маълумот топилмади",

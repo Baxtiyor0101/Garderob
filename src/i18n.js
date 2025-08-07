@@ -8,9 +8,9 @@ import translationRu from "./locales/ru/translation.json";
 import translationEn from "./locales/uzCryl/translation.json";
 
 const resources = {
-  uz: { translation: translationUz },
-  ru: { translation: translationRu },
-  cr: { translation: translationEn },
+  "O‘z": { translation: translationUz },
+  Ру: { translation: translationRu },
+  Ўз: { translation: translationEn },
 };
 
 i18n
@@ -18,7 +18,7 @@ i18n
   .use(initReactI18next) // Connects i18n to React
   .init({
     resources,
-    fallbackLng: "uz",
+    fallbackLng: "O‘z",
     interpolation: {
       escapeValue: false, // React already escapes values
     },

@@ -12,6 +12,7 @@ import {
   Autocomplete,
   Drawer,
 } from "@mui/material";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 // import { t } from "i18next";
 
@@ -46,9 +47,17 @@ const clothesTypes = [
   // add more as needed
 ];
 
-export default function ReceivablesDrawer({ addOpen, setAddOpen, form, setForm }) {
+export default function ReceivablesDrawer({
+  addOpen,
+  setAddOpen,
+  form,
+  setForm,
+}) {
   const { t } = useTranslation();
-  return (
+  console.log(form);
+  
+  const [statusCurrent, setStatusCurrent] = useState(form.status);
+  return (  
     <Drawer
       anchor="right"
       open={addOpen}
@@ -58,14 +67,17 @@ export default function ReceivablesDrawer({ addOpen, setAddOpen, form, setForm }
       <DialogTitle className="font-bold text-xl" sx={{ px: 3, pt: 3 }}>
         {t("Таҳрирлаш")}
       </DialogTitle>
-      <DialogContent className="flex flex-col gap-4 mt-2 pt-2" sx={{ px: 3 }}>
+      <DialogContent className="" sx={{ px: 3 }}>
         <FormControl fullWidth>
           <InputLabel>Ҳолати</InputLabel>
           <Select
             label={t("Ҳолати")}
-            value={form.status ? t("фаол") : t("нофаол")}
-            onChange={(e) =>
-              setForm({ ...form, status: e.target.value === "фаол" })
+            value={form.status ? t("Ундирилди") : t("Ундирилмади")}
+            onChange={(e) =>{
+              setForm({ status: !statusCurrent });
+              setStatusCurrent(!statusCurrent);
+            }
+              
             }
           >
             <MenuItem value={t("Ундирилди")}>{t("Ундирилди")}</MenuItem>
@@ -75,7 +87,10 @@ export default function ReceivablesDrawer({ addOpen, setAddOpen, form, setForm }
       </DialogContent>
       <DialogActions className="mt-2" sx={{ px: 3, pb: 2 }}>
         <Button onClick={() => setAddOpen(false)}>{t("Бекор қилиш")}</Button>
-        <Button variant="contained">{t("Таҳрирлаш")}</Button>
+        <Button onClick={() => {
+          setForm(form);
+          setAddOpen(false);
+        }} variant="contained">{t("Таҳрирлаш")}</Button>
       </DialogActions>
     </Drawer>
   );

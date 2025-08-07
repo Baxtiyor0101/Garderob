@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import LayersIcon from "@mui/icons-material/Layers";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import {
@@ -31,6 +31,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import { useTranslation } from "react-i18next";
 import IncomeExpenseModal from "./components/Modal";
+import useLanguageStore from "../../store/languageStore";
 // import { t } from "i18next";
 
 function IncomeExpense() {
@@ -38,11 +39,24 @@ function IncomeExpense() {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [fromDate, setFromDate] = React.useState(null);
   const [toDate, setToDate] = React.useState(null);
+  const { language } = useLanguageStore();
+
 
   const { t } = useTranslation();
 
   /////////////////
-   
+     useEffect(() => {
+       try {
+         let elements = document.querySelectorAll(
+           ".MuiTablePagination-selectLabel.css-s09cke-MuiTablePagination-selectLabel"
+         );
+         elements.forEach((el) => {
+           el.innerHTML = t("Саҳифадаги қаторлар:");
+         });
+       } catch (e) {
+         // do nothing
+       }
+     }, [language]);
 
   const columns = [
     { field: "id", headerName: "T/r", minWidth: 60, flex: 1 },
@@ -132,7 +146,7 @@ function IncomeExpense() {
   };
   ////////////////
 
-  const handleRowClick = (params) => {
+  const handleClick = (params) => {
     setSelectedRow(params.row);
     setModalOpen(true);
   };
@@ -375,7 +389,7 @@ function IncomeExpense() {
             <CloseIcon />
           </IconButton>
           {/* here we need create button */}
-          <Button variant="contained" size="small">
+          <Button onClick={handleClick} variant="contained" size="small">
             +киритиш
           </Button>
         </div>
@@ -393,7 +407,7 @@ function IncomeExpense() {
           rowsPerPageOptions={[8, 16, 32]}
           pagination
           disableSelectionOnClick
-          onRowClick={handleRowClick}
+          // onRowClick={handleClick}
           localeText={uzLocaleText}
           getRowClassName={(params) =>
             params.indexRelativeToCurrentPage % 2 === 0 ? "even-row" : "odd-row"

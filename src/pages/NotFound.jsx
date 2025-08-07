@@ -1,15 +1,41 @@
 import { Button } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 // import { t } from "i18next";
 
 function NotFound() {
   const { t } = useTranslation();
+  // const [count, setCount] = useState(0);
+  // console.log("rendered");
+
+  // const increase = () => {
+  //   setCount(count + 1);
+  // };
+  // const decrese = () => {
+  //   setCount(count - 1);
+  // };
+
+  // useEffect(() => {
+  //   console.log("mounted");
+  // }, [count]);
   return (
     <div>
+      {/* <h1 className="text-3xl font-bold text-green-500   mt-4 ">{count}</h1>
+      <button
+        onClick={increase}
+        className="bg-green-500 text-white px-4 py-2 rounded"
+      >
+        +++
+      </button>
+      <button
+        onClick={decrese}
+        className="bg-red-500 text-white px-4 py-2 rounded"
+      >
+        ---
+      </button> */}
       <h1 className="text-3xl font-bold text-red-500 text-center mt-4 ">
         {t("Саҳифа топилмади")}
-        {t("OOOOOOOOOOOOOOOO")}
+        {/* {t("OOOOOOOOOOOOOOOO")} */}
       </h1>
       <p className="text-center mt-4">
         {/* here e can upfadate the content of not found page to crle alphabet

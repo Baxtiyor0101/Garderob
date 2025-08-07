@@ -8,14 +8,20 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+// import useLanguageStore from "../store/languageStore"; // adjust path as needed
+
 import LanguageIcon from "@mui/icons-material/Language";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 
 import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import AccountMenu from "./Menu";
+import useLanguageStore from "../../store/languageStore";
 
 function Navbar() {
+  const { language, setLanguage } = useLanguageStore();
+  // const [langOpen, setLangOpen] = useState(false);
+
   const [langOpen, setLangOpen] = useState(false);
   const [currentLang, setCurrentLang] = useState("uz");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,16 +41,21 @@ function Navbar() {
   }, []);
 
   const languages = [
-    { code: "uz", label: "O‘z" },
-    { code: "cr", label: "Уз" },
-    { code: "ru", label: "Ру" },
+    { code: "O‘z", label: "O‘z" },
+    { code: "Ўз", label: "Ўз" },
+    { code: "Ру", label: "Ру" },
   ];
 
+  // const handleLanguageChange = (lang) => {
+  //   setCurrentLang(lang);
+  //   setLangOpen(false);
+  //   i18n.changeLanguage(lang);
+  // };
   const handleLanguageChange = (lang) => {
-    setCurrentLang(lang);
+    setLanguage(lang); // this sets Zustand state + i18n language
     setLangOpen(false);
-    i18n.changeLanguage(lang);
   };
+
 
   const navLinks = [
     {
@@ -65,17 +76,11 @@ function Navbar() {
       icon: <CalculateIcon />,
       match: (path) => path === "/receivables",
     },
-    // {
-    //   to: "/reports",
-    //   label: t("Ҳисоботлар"),
-    //   icon: <MenuIcon />,
-    //   match: (path) => path === "/reports",
-    // },
     {
       label: t("Маълумотлар"),
       icon: <MenuIcon />,
       match: (path) => path.startsWith("/info"),
-      dropdown: true, // signal this has nested routes
+      dropdown: true,
       children: [
         { to: "/info/clothings", label: t("Кийимлар") },
         { to: "/info/sizes", label: t("Ўлчамлар") },
@@ -110,7 +115,7 @@ function Navbar() {
                   <div key={index} className="relative cursor-pointer">
                     <button
                       onClick={() => setInfoOpen((prev) => !prev)}
-                      className={`flex items-center gap-1 px-2 py-1 text-xs rounded font-bold transition ${
+                      className={`flex items-center gap-1 px-2 py-1 text-sm rounded font-bold transition ${
                         isMatch ? "text-white" : "text-blue-100"
                       }`}
                     >
@@ -129,7 +134,7 @@ function Navbar() {
                     {infoOpen && (
                       <div className="absolute left-0 mt-1 bg-white rounded shadow-lg z-10 w-48">
                         {link.children.map((child) => (
-                          <NavLink 
+                          <NavLink
                             key={child.to}
                             to={child.to}
                             onClick={() => setInfoOpen(false)}
@@ -148,8 +153,8 @@ function Navbar() {
                 <NavLink
                   key={link.to}
                   to={link.to}
-                  className={`flex items-center gap-1 px-2 py-1 text-xs cursor-pointer rounded font-bold transition ${
-                    isMatch ? "text-white" : "text-blue-100"
+                  className={`flex items-center gap-1 px-2 py-1 text-sm cursor-pointer rounded font-bold transition ${
+                    isMatch ? "text-white" : "text-blue-200"
                   }`}
                 >
                   {React.cloneElement(link.icon, {
@@ -187,17 +192,17 @@ function Navbar() {
               onClick={() => setLangOpen(!langOpen)}
               className="flex items-center gap-1 px-2 py-1 font-bold cursor-pointer text-white rounded-md text-sm"
             >
-              {/* <LanguageIcon fontSize="small" /> */}
-              <span className="uppercase">{currentLang}</span>
+              <span className="uppercase">{language}</span>
             </button>
+
             {langOpen && (
-              <div className="absolute right-0 mt-2 bg-white border rounded shadow z-50   border-none">
+              <div className="absolute right-0 mt-2 bg-white border rounded shadow z-50 border-none">
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => handleLanguageChange(lang.code)}
                     className={`block w-full text-left px-4 py-2 text-sm cursor-pointer transition hover:bg-blue-100 ${
-                      currentLang === lang.code ? "font-bold text-blue-600" : ""
+                      language === lang.code ? "font-bold text-blue-600" : ""
                     }`}
                   >
                     {lang.label}
@@ -206,7 +211,6 @@ function Navbar() {
               </div>
             )}
           </div>
-
           {/* Profile */}
           <div className="relative hidden md:block">
             <div

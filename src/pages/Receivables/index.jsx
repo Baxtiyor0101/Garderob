@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LayersIcon from "@mui/icons-material/Layers";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { Button, CircularProgress, MenuItem, TextField } from "@mui/material";
@@ -16,9 +16,24 @@ import ReceivablesModal from "./components/Modal";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import ReceivablesDrawer from "./components/EditDrower";
+import useLanguageStore from "../../store/languageStore";
 // import { t } from "i18next";
 
 function Receivables() {
+  const { language } = useLanguageStore();
+
+  useEffect(() => {
+    try {
+      let elements = document.querySelectorAll(
+        ".MuiTablePagination-selectLabel.css-s09cke-MuiTablePagination-selectLabel"
+      );
+      elements.forEach((el) => {
+        el.innerHTML = t("Саҳифадаги қаторлар:");
+      });
+    } catch (e) {
+      // do nothing
+    }
+  }, [language]);
   const { t } = useTranslation();
   const [modalOpen, setModalOpen] = React.useState(false);
   const [selectedRow, setSelectedRow] = React.useState(null);
@@ -42,20 +57,13 @@ function Receivables() {
 
   // console.log(toDate);
   const [form, setForm] = useState({
-    name: "",
-    type: "",
-    price: "",
-    unit: "",
-    sizes: "",
     status: true,
   });
 
-
   /////////////////
   const handleOpenEdit = (row) => {
-    setForm(row);
+    setForm({status:row.status});
     setEditRow(row);
-    setEditMode(true);
     setDialogOpen(true);
   };
   const columns = [
@@ -538,16 +546,16 @@ function Receivables() {
         onClose={handleCloseModal}
         row={selectedRow}
       />
-            <ReceivablesDrawer
-              addOpen={dialogOpen}
-              setAddOpen={setDialogOpen}
-              form={form}
-              setForm={setForm}
-              types={types}
-              // units={units}
-              // handleAdd={handleSave}
-              // editMode={editMode}
-            />
+      <ReceivablesDrawer
+        addOpen={dialogOpen}
+        setAddOpen={setDialogOpen}
+        form={form}
+        setForm={setForm}
+        types={types}
+        // units={units}
+        // handleAdd={handleSave}
+        // editMode={editMode}
+      />
     </div>
   );
 }

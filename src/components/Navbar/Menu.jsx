@@ -20,7 +20,7 @@ export default function AccountMenu() {
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-    toast.success("opened Successfully!");
+    // toast.success("opened Successfully!");
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -82,30 +82,31 @@ export default function AccountMenu() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
+          <Avatar /> {t("Профил")}
         </MenuItem>
         {/* i think here should be sm other part also  */}
         <MenuItem onClick={handleClose}>
-          <Avatar /> My account
+          <Avatar /> {t("Менинг аккаунтим")}
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
+        {/* <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>
           Add another account
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
-          Settings
+          {/* Settings in uzbek*/}
+          {t("Созламалар")}
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
-          Logout
+          {t("Чиқиш")}
         </MenuItem>
       </Menu>
     </React.Fragment>

@@ -1,5 +1,5 @@
 // InfoProductPage.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -14,54 +14,67 @@ import {
 import { DataGrid, GridPagination } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import ProductDialog from "./components/AddEditModal";
-// import Stratistics from "./components/Stratistics";
 import { useTranslation } from "react-i18next";
 import SizeDialog from "./components/AddEditModal";
-// import ProductStats from "./components/Stratistics";
-// import ProductDialog from "./components/CreateModaltProductDialog";
-// ProductDialog;
-const types = [
-  { value: "униформа", label: "Униформа" },
-  { value: "нижнее белье", label: "Нижнее белье" },
-  { value: "обувь", label: "Обувь" },
-  { value: "головной убор", label: "Головной убор" },
-];
-
-const units = [
-  { value: "шт", label: "шт" },
-  { value: "пара", label: "пара" },
-  { value: "к-т", label: "к-т" },
-];
-
-const initialRows = [
-  {
-    id: 1,
-    name: "42",
-    clothesTypes: ["обувь", "шим"],
-    status: true,
-  },
-  {
-    id: 2,
-    name: "S",
-    clothesTypes: ["униформа", "нижнее белье"],
-    status: true,
-  },
-  {
-    id: 3,
-    name: "XL",
-    clothesTypes: ["униформа"],
-    status: false,
-  },
-  {
-    id: 4,
-    name: "56",
-    clothesTypes: ["головной убор"],
-    status: true,
-  },
-];
+import useLanguageStore from "../../store/languageStore";
+// const { t } = useTranslation(); // Assuming you have a translation function
 
 function InfoSizes() {
+  const { t } = useTranslation();
+  const { language } = useLanguageStore();
+
+  const types = [
+    { value: t("форма"), label: t("Форма") },
+    { value: t("ички кийим"), label: t("Ички кийим") },
+    { value: t("пойабзал"), label: t("Пойабзал") },
+    { value: t("бош кийим"), label: t("Бош кийим") },
+  ];
+
+  const units = [
+    { value: t("дона"), label: t("дона") },
+    { value: t("жуфт"), label: t("жуфт") },
+    { value: t("тўплам"), label: t("тўплам") },
+  ];
+
+  const initialRows = [
+    {
+      id: 1,
+      name: "42",
+      clothesTypes: [t("пойабзал"), t("шим")],
+      status: true,
+    },
+    {
+      id: 2,
+      name: "S",
+      clothesTypes: [t("форма"), t("ички кийим")],
+      status: true,
+    },
+    {
+      id: 3,
+      name: "XL",
+      clothesTypes: [t("форма")],
+      status: false,
+    },
+    {
+      id: 4,
+      name: "56",
+      clothesTypes: [t("ички кийим")],
+      status: true,
+    },
+  ];
+
+  useEffect(() => {
+    try {
+      let elements = document.querySelectorAll(
+        ".MuiTablePagination-selectLabel.css-s09cke-MuiTablePagination-selectLabel"
+      );
+      elements.forEach((el) => {
+        el.innerHTML = t("Саҳифадаги қаторлар:");
+      });
+    } catch (e) {
+      // do nothing
+    }
+  }, [language]);
   const [rows, setRows] = useState(initialRows);
   const [filter, setFilter] = useState({
     name: "",
@@ -72,7 +85,6 @@ function InfoSizes() {
   });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const { t } = useTranslation(); // Assuming you have a translation function
   const [form, setForm] = useState({
     name: "",
     type: "",
@@ -83,17 +95,19 @@ function InfoSizes() {
   });
   const [editRow, setEditRow] = useState(null);
 
-const filteredRows = rows.filter((row) => {
-  // Filter by size name (case-insensitive)
-  const nameOk =
-    !filter.name ||
-    (row.name || "").toLowerCase().includes(filter.name.toLowerCase());
-    const nameRuOk = 
-    !filter.name || (row.nameRu || "").toLowerCase().includes(filter.name.toLowerCase());
-  // Filter by clothes type (at least one type matches)
-  const typeOk = !filter.type || (row.clothesTypes || []).includes(filter.type);
-  return nameOk && typeOk;
-});
+  const filteredRows = rows.filter((row) => {
+    // Filter by size name (case-insensitive)
+    const nameOk =
+      !filter.name ||
+      (row.name || "").toLowerCase().includes(filter.name.toLowerCase());
+    const nameRuOk =
+      !filter.name ||
+      (row.nameRu || "").toLowerCase().includes(filter.name.toLowerCase());
+    // Filter by clothes type (at least one type matches)
+    const typeOk =
+      !filter.type || (row.clothesTypes || []).includes(filter.type);
+    return nameOk && typeOk;
+  });
 
   const handleOpenAdd = () => {
     setForm({
@@ -127,24 +141,25 @@ const filteredRows = rows.filter((row) => {
     setDialogOpen(false);
   };
   const clothesTypes = [
-    { value: "униформа", label: "Униформа" },
-    { value: "нижнее белье", label: "Нижнее белье" },
-    { value: "обувь", label: "Пойабзал" },
-    { value: "головной убор", label: "Бош кийим" },
+    { value: "форма", label: "Форма" },
+    { value: "ички кийим", label: "Ички кийим" },
+    { value: "пойабзал", label: "Пойабзал" },
+    { value: "бош кийим", label: "Бош кийим" },
     { value: "шим", label: "Шим" },
-    // add more as needed
+    // қўшимча турлар керак бўлса, қўшишингиз мумкин
   ];
+
   const columns = [
-    { field: "id", headerName: "Т/р", minWidth: 60, flex: 0.5 },
+    { field: "id", headerName: t("Т/р"), minWidth: 60, flex: 0.5 },
     {
       field: "name",
-      headerName: "Ўлчам номи",
+      headerName: t("Ўлчам номи"),
       minWidth: 100,
       flex: 1,
     },
     {
       field: "clothesTypes",
-      headerName: "Қандай кийим турлари учун",
+      headerName: t("Қандай кийим турлари учун"),
       minWidth: 200,
       flex: 2,
       renderCell: (params) => (
@@ -160,7 +175,7 @@ const filteredRows = rows.filter((row) => {
     },
     {
       field: "status",
-      headerName: "Ҳолати",
+      headerName: t("Ҳолати"),
       minWidth: 100,
       flex: 1,
       renderCell: (params) => (
@@ -170,13 +185,13 @@ const filteredRows = rows.filter((row) => {
             fontWeight: 500,
           }}
         >
-          {params.row.status ? "Фаол" : "Нофаол"}
+          {params.row.status ? t("Фаол") : t("Нофаол")}
         </span>
       ),
     },
     {
       field: "actions",
-      headerName: "Таҳрирлаш",
+      headerName: t("Таҳрирлаш"),
       minWidth: 100,
       flex: 0.7,
       sortable: false,
@@ -187,48 +202,94 @@ const filteredRows = rows.filter((row) => {
       ),
     },
   ];
+
+
   const uzLocaleText = {
-    // Pagination
-    noRowsLabel: "Маълумот топилмади",
-    footerRowSelected: (count) => `${count} та танланган`,
-    footerTotalRows: "Жами сатрлар:",
-    footerPaginationRowsPerPage: "Саҳифадаги сатрлар:",
-    MuiTablePagination: {
-      labelRowsPerPage: "Саҳифадаги сатрлар:",
-      labelDisplayedRows: ({ from, to, count }) =>
-        `${from}-${to} / ${count !== -1 ? count : `бешдан кўп`}`,
-      nextIconButtonText: "Кейингиси",
-      backIconButtonText: "Олдингиси",
-    },
-    // Filter panel
-    filterPanelAddFilter: "Фильтр қўшиш",
-    filterPanelDeleteIconLabel: "Ўчириш",
-    filterPanelOperators: "Операторлар",
-    filterPanelColumns: "Устунлар",
-    filterPanelInputLabel: "Қидирув қиймати",
-    filterPanelInputPlaceholder: "Қидирув...",
-    // Column menu
-    columnMenuLabel: "Меню",
-    columnMenuShowColumns: "Устунларни кўрсатиш",
-    columnMenuFilter: "Фильтр",
-    columnMenuHideColumn: "Устунни яшириш",
-    columnMenuUnsort: "Сараламаслик",
-    columnMenuSortAsc: "Кўтарилиш бўйича саралаш",
-    columnMenuSortDesc: "Камайиш бўйича саралаш",
-    // Toolbar
-    toolbarDensity: "Зичлик",
-    toolbarDensityLabel: "Зичлик",
-    toolbarDensityCompact: "Зич",
-    toolbarDensityStandard: "Стандарт",
-    toolbarDensityComfortable: "Қулай",
-    toolbarColumns: "Устунлар",
-    toolbarFilters: "Фильтрлар",
-    toolbarExport: "Экспорт",
-    toolbarExportCSV: "CSV'га экспорт",
-    toolbarExportPrint: "Чоп этиш",
-    // Other
-    checkboxSelectionHeaderName: "Танлаш",
-  };
+  // Pagination
+  noRowsLabel: t("Маълумот топилмади"),
+  footerRowSelected: (count) => `${count} та танланган`,
+  footerTotalRows: t("Жами сатрлар:"),
+  footerPaginationRowsPerPage: t("Саҳифадаги сатрлар:"),
+  MuiTablePagination: {
+    labelRowsPerPage: t("Саҳифадаги сатрлар:"),
+    labelDisplayedRows: ({ from, to, count }) =>
+      `${from}-${to} / ${count !== -1 ? count : t("бешдан кўп")}`,
+    nextIconButtonText: t("Кейингиси"),
+    backIconButtonText: t("Олдингиси"),
+  },
+
+  // Toolbar
+  toolbarDensity: t("Зичлик"),
+  toolbarDensityLabel: t("Зичлик"),
+  toolbarDensityCompact: t("Зич"),
+  toolbarDensityStandard: t("Стандарт"),
+  toolbarDensityComfortable: t("Қулай"),
+  toolbarColumns: t("Устунлар"),
+  toolbarFilters: t("Фильтрлар"),
+  toolbarExport: t("Экспорт"),
+  toolbarExportCSV: t("CSV'га экспорт"),
+  toolbarExportPrint: t("Чоп этиш"),
+  toolbarQuickFilterPlaceholder: t("Қидирув..."),
+
+  // Filter panel
+  filterPanelAddFilter: t("Фильтр қўшиш"),
+  filterPanelDeleteIconLabel: t("Ўчириш"),
+  filterPanelOperators: t("Операторлар"),
+  filterPanelColumns: t("Устунлар"),
+  filterPanelInputLabel: t("Қидирув қиймати"),
+  filterPanelInputPlaceholder: t("Қидирув..."),
+
+  // Column menu
+  columnMenuLabel: t("Меню"),
+  columnMenuShowColumns: t("Устунларни кўрсатиш"),
+  columnMenuFilter: t("Фильтр"),
+  columnMenuHideColumn: t("Устунни яшириш"),
+  columnMenuUnsort: t("Сараламаслик"),
+  columnMenuSortAsc: t("Кўтарилиш бўйича саралаш"),
+  columnMenuSortDesc: t("Камайиш бўйича саралаш"),
+
+  // Columns panel text field
+  columnsPanelTextFieldLabel: t("Устунни қидир"),
+  columnsPanelTextFieldPlaceholder: t("Устун номи"),
+  
+  // Rows panel / row menu (if using row grouping or tree data)
+  rowReorderingHeaderName: t("Сатрни қайта тартиблаш"),
+  
+  // Boolean operators
+  filterOperatorContains: t("Ичидан"),
+  filterOperatorEquals: t("Баробар"),
+  filterOperatorStartsWith: t("Билан бошланади"),
+  filterOperatorEndsWith: t("Билан тугайди"),
+  filterOperatorIsEmpty: t("Бўш"),
+  filterOperatorIsNotEmpty: t("Бўш эмас"),
+  filterOperatorIsAnyOf: t("Қуйидагилардан бири"),
+
+  // Columns panel
+  columnsPanelDragIconLabel: t("Қайта жойлаштириш"),
+  columnsPanelShowAllButton: t("Ҳаммасини кўрсатиш"),
+  columnsPanelHideAllButton: t("Ҳаммасини яшириш"),
+
+  // Boolean cell values
+  booleanCellTrueLabel: t("Ҳа"),
+  booleanCellFalseLabel: t("Йўқ"),
+
+  // Clipboard export
+  clipboardCopyMessage: t("Нусха олинди"),
+  clipboardPasteMessage: t("Қўйилди"),
+
+  // Additional messages
+  // If using Tree Data or Grouping:
+  treeDataGroupingHeaderName: t("Гуруҳлар"),
+  treeDataExpand: t("Кенгайтириш"),
+  treeDataCollapse: t("Иқтибос қилиш"),
+
+  // Footer selected rows count
+  footerSelectedRows: (count) =>
+    count !== 1 ? `${count} сатр танланган` : `1 сатр танланган`,
+};
+
+
+
   function CustomPagination(props) {
     return (
       <GridPagination
